@@ -34,8 +34,8 @@ if (Test-Path -Path $TempFolder) {
 	mkdir $TempFolder
 }
 
-"Downloading all required files"
-$BaseURL = "https://github.com/bscheewe/software/raw/main/OfficeUninstall/"
+Write-Host "Downloading all required files"
+$BaseURL = "https://github.com/levelsoftware/scripts/raw/main/PowerShell/Microsoft%20Office/OfficeUninstall"
 $O365Setup = "OfficeSetup.exe"
 $ConfigFile = "UninstallOffice.xml"
 $ListOfFiles = $O365Setup,$ConfigFile,"OffScrub03.vbs","OffScrub07.vbs","OffScrub10.vbs","OffScrub_O15msi.vbs","OffScrub_O16msi.vbs","OffScrubc2r.vbs","Office2013Setup.exe","Office2016Setup.exe","Remove-PreviousOfficeInstalls.ps1"
