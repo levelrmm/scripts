@@ -1,4 +1,20 @@
-#Prepare
+<#
+This script is provided as a convenience for Level.io customers. We cannot 
+guarantee this will work in all environments. Please test before deploying
+to your production environment.  We welcome contribution to the scripts in 
+our community repo!
+
+.DESCRIPTION
+    Detect if Winget is installed and if not, install it.  Check if the 
+    winget file path is in the sytem path environment variable and add it.
+.LANGUAGE
+    PowerShell
+.TIMEOUT
+    100
+.LINK
+#>
+
+#Setup
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
