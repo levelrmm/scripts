@@ -35,11 +35,7 @@ foreach ($profileStatusItem in $profileStatus) {
 }
 
 #Enable the Windows firewall for profiles that have it disabled
-if ($profileStatus -contains $true) {
-    Write-Host "Firewall is already enabled on all profiles.  Exiting."
-    exit    
-}
-else {
+if ($profileStatus -contains $false) {
     $i = 0
     foreach ($profileStatusItem in $profileStatus) {
         if ($profileStatusItem) {
@@ -50,4 +46,7 @@ else {
         }
         $i++
     }
+}
+else {
+    Write-Host "Firewall is already enabled on all profiles.  Exiting."
 }
