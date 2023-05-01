@@ -12,6 +12,7 @@ our community repo!
 .TIMEOUT
     100
 .LINK
+    https://raw.githubusercontent.com/levelsoftware/scripts/main/PowerShell/Windows%20Firewall/Enable-Windows-Firewall.ps1
 #>
 
 #Initialize
