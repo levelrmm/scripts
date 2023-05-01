@@ -1,0 +1,10 @@
+<Configuration>
+ <Add OfficeClientEdition="32">
+  <Product ID="VisioPro2021Retail">
+      <Language ID="en-us" />
+    </Product>
+</Add>
+  <!--  <Updates Enabled="TRUE" Channel="Monthly" /> -->
+<Display Level="None" AcceptEULA="TRUE" />
+<Property Name="AUTOACTIVATE" Value="1" />
+</Configuration>
