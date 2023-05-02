@@ -45,7 +45,7 @@ If ([Version]$TestWinGet. Version -gt "2022.506.16.0") {
 }
 Else {
     Write-Host "Winget is not installed. Exiting..."
-    exit
+    exit 1
 }
 
 
@@ -83,6 +83,11 @@ foreach ($Module in $ModuleList) {
     }
 }
 
-invoke-ascurrentuser -scriptblock {
-    winget upgrade --all --silent --accept-source-agreements
-}
+Write-Host "Running remaining winget updates as $LoggedInUser"
+#write the output to a file so that we can pick it back up as SYSTEM
+$UpdateAllApps = { winget upgrade --all --silent --accept-source-agreements | Out-File "$TempFolder\wingetAsUser.txt" }
+invoke-ascurrentuser -scriptblock $UpdateAllApps
+#Write the contents of the command output file
+Get-Content "$TempFolder\wingetAsUser.txt"
+#Delete the output file
+remove-item "$TempFolder\wingetAsUser.txt" -Force
