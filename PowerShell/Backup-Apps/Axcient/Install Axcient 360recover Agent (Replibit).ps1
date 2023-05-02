@@ -27,7 +27,7 @@ else {
 
 #Download the Axcient installer
 $AxcientInstaller = "agentInstaller.msi"
-$Installer = $TempFolder\$AxcientInstaller
+$Installer = "$TempFolder\$AxcientInstaller"
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $ProgressPreference = 'SilentlyContinue'
