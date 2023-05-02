@@ -16,7 +16,7 @@ our community repo!
 
 
 $TestWinget = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq "Microsoft.DesktopAppInstaller" }
-$TestEnvPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") -notlike "*C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe*"
+$TestEnvPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") -like "*C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe*"
 #Check if Winget is installed
 If ([Version]$TestWinGet. Version -gt "2022.506.16.0") {
     Write-Host "WinGet is Installed, checking environment path." -ForegroundColor Green
