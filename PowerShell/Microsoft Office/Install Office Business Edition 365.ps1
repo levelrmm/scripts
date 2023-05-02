@@ -28,6 +28,7 @@ else {
 }
 
 #Download installers to temp folder
+$ProgressPreference = 'SilentlyContinue'
 Write-Host "Downloading required files"
 $BaseURL = "https://github.com/levelsoftware/scripts/raw/main/PowerShell/Microsoft%20Office/"
 $O365Setup = "OfficeSetup.exe"

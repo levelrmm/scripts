@@ -54,6 +54,7 @@ else {
 $Installer = "$TempFolder\FortiClientVPNSetup_7.2.0.0690_x64.exe"
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$ProgressPreference = 'SilentlyContinue'
 iwr -uri https://github.com/levelsoftware/scripts/raw/main/PowerShell/VPN-Clients/FortiClient/FortiClientVPNSetup_7.2.0.0690_x64.exe -outfile $Installer
 $FileSize = [math]::round((Get-Item -Path $Installer).Length / 1MB, 2)
 "Downloaded $Installer - $FileSize MB"
