@@ -15,7 +15,7 @@ our community repo!
 
 #Change the Axcient server address (IP) and password
 $AxcientApplianceIP = "INSERT_IP_HERE" #Must be reachable from the device where the agent is being installed
-$AxcientAppliancePassword "INSERT_PASSWORD_HERE"
+$AxcientAppliancePassword = "INSERT_PASSWORD_HERE"
 
 #Check for temp folder location and create if not present
 $TempFolder = 'c:\temp'
