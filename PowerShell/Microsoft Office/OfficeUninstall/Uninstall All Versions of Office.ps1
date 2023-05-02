@@ -6,8 +6,8 @@ our community repo!
 
 .DESCRIPTION
     This may take a few minutes to run completely depending on the speed
-     of the machine.  Reboot after running as well because the icons might
-      linger otherwise. 
+    of the machine.  Reboot after running as well because the icons might
+    linger otherwise. 
       
     Warning - this will remove all Office products including Visio, 
     Project, etc!
@@ -17,7 +17,7 @@ our community repo!
 .LANGUAGE
     PowerShell
 .TIMEOUT
-    100
+    1200
 .LINK
 #>
 
@@ -27,7 +27,7 @@ Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 
 $TempFolder = 'C:\temp\UninstallOffice\'
 if (Test-Path -Path $TempFolder) {
-    "Temp path exists!"
+    #Temp path exists
 }
 else {
     mkdir $TempFolder
