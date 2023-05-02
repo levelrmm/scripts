@@ -47,6 +47,7 @@ $Installer = "$TempFolder\$S1_File"
 vssadmin Resize ShadowStorage /For=C: /On=C: /MaxSize=10%
 
 #Download the installer
+$ProgressPreference = 'SilentlyContinue'
 iwr -uri https://github.com/levelsoftware/scripts/raw/main/PowerShell/Security-Apps/SentinelOne/$S1_File -outfile $Installer
 $FileSize = [math]::round((Get-Item -Path $Installer).Length / 1MB, 2)
 "Downloaded $Installer - $FileSize MB"

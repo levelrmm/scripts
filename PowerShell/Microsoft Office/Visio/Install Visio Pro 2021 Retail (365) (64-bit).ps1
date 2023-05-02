@@ -27,6 +27,7 @@ if (Test-Path -Path $TempFolder) {
 
 #Download the required files
 "Downloading all required files"
+$ProgressPreference = 'SilentlyContinue'
 $BaseURL = "https://github.com/advanced-data/public/raw/main/"
 $O365Setup = "VisioSetup.exe"
 $ConfigFile = "VisioPro2021Retail-x64.xml"

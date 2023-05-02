@@ -31,6 +31,7 @@ $BaseURL = "https://github.com/levelsoftware/scripts/raw/main/PowerShell/Microso
 $O365Setup = "OfficeSetup.exe"
 $ConfigFile = "UninstallOffice.xml"
 $ListOfFiles = $O365Setup, $ConfigFile
+$ProgressPreference = 'SilentlyContinue'
 foreach ($File in $ListOfFiles) {
     iwr -uri $BaseURL$File -outfile $TempFolder$File
     $FileSize = [math]::round((Get-Item -Path $TempFolder$File).Length / 1MB, 2)
