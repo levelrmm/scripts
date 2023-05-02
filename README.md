@@ -4,7 +4,7 @@ Welcome to the community script repository for [Level.io](https://level.io).  Th
 This repo is provided as a courtesy for Level clients, however scripts should not be run in a production environment without first testing!  Some scripts may include 3rd-party binaries for installers.  We vet the binaries, however we would reccomend you download binaries directly from the source.  Trust but verify comes to mind here.
 
 # Rules
-We welcome community input and contributions.  If you have scripts that you'd like to share or have improved, feel free to contribute and we'll do our best to polish them up.
+We welcome community input and contributions.  If you have scripts that you'd like to share (or work on together), feel free to contribute.
 
 Do not include passwords, keys, secrets, certs, etc.  Nothing sensitive should ever be included in this public repository.  Also scrub all scripts of identifying information including client information, IPs, hostnames, FQDNs, etc.
 
