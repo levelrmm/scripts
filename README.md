@@ -1,7 +1,7 @@
 # Scripts for Level.io
 Welcome to the community script repository for [Level.io](https://level.io).  These scripts are intended to help IT Admins improve their automation efforts in support IT infrastructre and endpoints.  These are provided for Level clients, however these scripts will work with any automation system, or on a single device.
 
-This repo is provided as a courtesy for Level clients, however scripts should not be run in a production environment without first testing!  Some scripts may include 3rd-party binaries for installers.  We vet the binaries, however we would reccomend you download binaries directly from the source.  Trust but verify comes to mind here.
+This repo is provided as a courtesy for Level clients, however scripts should not be run in a production environment without first testing!  Some scripts may include 3rd-party binaries for installers.  We vet the binaries, however we would recommend you download binaries directly from the source.  Trust but verify comes to mind here.
 
 # Rules
 We welcome community input and contributions.  If you have scripts that you'd like to share (or work on together), feel free to contribute.
