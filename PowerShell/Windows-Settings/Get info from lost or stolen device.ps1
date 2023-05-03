@@ -7,6 +7,9 @@ our community repo!
 .DESCRIPTION
     Pull device details and networking information to help identify the 
     device and its possible location.
+    
+    To-do - Consider adding network scanning to provide more evidence
+    about the network where the device comes online.    
 .LANGUAGE
     PowerShell
 .TIMEOUT
