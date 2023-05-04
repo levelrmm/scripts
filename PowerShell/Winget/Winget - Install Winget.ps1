@@ -73,10 +73,10 @@ if ([Environment]::GetEnvironmentVariable("PATH", "Machine") -notlike "*C:\Progr
     if ($ResolveWingetPath) {
         $WingetPath = $ResolveWingetPath[-1].Path
     }
-    $Wingetpath = Split-Path -Path $WingetPath -Parent
+    $WingetPath = Split-Path -Path $WingetPath -Parent
 
     #Set system path environment variable
-    $SystemPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") + [IO.Path]::PathSeparator + $Wingetpath
+    $SystemPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") + [IO.Path]::PathSeparator + $WingetPath
     [Environment]::SetEnvironmentVariable( "Path", $SystemPath, "Machine" )
     #Check if path successfully added
     if ([Environment]::GetEnvironmentVariable("PATH", "Machine") -like "*C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe*") {
