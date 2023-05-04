@@ -32,9 +32,15 @@ foreach ($FullPath in $GoodPath) {
         $ErrorActionPreference = 'silentlycontinue'
 
     }
-
-
-
 }
 
-Write-Output "Teamviewer ID: $($TeamViewerID)"
+If ($TeamViewerID){
+    Write-Output "Teamviewer ID: $($TeamViewerID)"
+}
+else {
+    Write-Host "Teamviewer was not detected."
+    Exit 1
+}
+
+
+
