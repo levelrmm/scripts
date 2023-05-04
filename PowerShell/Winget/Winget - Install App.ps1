@@ -40,10 +40,10 @@ If ([Version]$TestWinGet. Version -gt "2022.506.16.0") {
         if ($ResolveWingetPath) {
             $WingetPath = $ResolveWingetPath[-1].Path
         }
-        $Wingetpath = Split-Path -Path $WingetPath -Parent
+        $WingetPath = Split-Path -Path $WingetPath -Parent
 
         #Set system path environment variable
-        $SystemPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") + [IO.Path]::PathSeparator + $Wingetpath
+        $SystemPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") + [IO.Path]::PathSeparator + $WingetPath
         [Environment]::SetEnvironmentVariable( "Path", $SystemPath, "Machine" )
         
         ##Install the app by calling winget via the full path
