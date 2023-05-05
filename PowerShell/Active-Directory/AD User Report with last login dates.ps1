@@ -20,4 +20,4 @@ our community repo!
 .LINK
 #>
 
-Get-ADUser -Filter {((Enabled -eq $true) -and (LastLogonDate -lt $date))} -Properties LastLogonDate | select samaccountname, Name, LastLogonDate | Sort-Object LastLogonDate
+Get-ADUser -Filter {(Enabled -eq $true)} -Properties LastLogonDate | select samaccountname, Name, LastLogonDate | Sort-Object LastLogonDate
