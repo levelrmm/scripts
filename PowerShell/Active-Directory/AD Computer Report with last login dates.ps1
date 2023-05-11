@@ -20,4 +20,5 @@ our community repo!
 .LINK
 #>
 
+#Get all AD users and sort by last logon
 Get-ADUser -Filter {(Enabled -eq $true)} -Properties LastLogonDate | select samaccountname, Name, LastLogonDate | Sort-Object LastLogonDate
