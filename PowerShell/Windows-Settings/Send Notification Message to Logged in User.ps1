@@ -18,9 +18,10 @@ our community repo!
 .LINK
 #>
 
-#Put your message down on line 63.  Can't pass variables to the invoke-ascurrentuser
-#scriptblock.  Even if the variable is expanded as a string and converted back to 
-#a scriptblock, the command won't take.  :eyeroll:
+#Enter the notification message here.
+$Message_file = @"
+Insert your message here
+"@
 
 #Check if a user is logged in.  Can't send a toast to no one!
 $LoggedInUser = Get-Process -IncludeUserName -Name explorer | Select-Object -ExpandProperty UserName -Unique
@@ -57,10 +58,24 @@ foreach ($Module in $ModuleList) {
     }
 }
 
+$TempFolder = 'C:\temp'
+if (Test-Path -Path $TempFolder -ErrorAction SilentlyContinue) {
+}
+else {
+	mkdir c:\temp
+}
+
+#Save the message to a file because can't pass variables to the invoke-ascurrentuser
+#Converting the script block to a string and expanding the variable doesn't work either.  :eyeroll:
+$Message_file | Out-File -FilePath $TempFolder\message.txt -Force
+
 invoke-ascurrentuser -scriptblock {
+    $TempFolder = 'C:\temp'
+    #Read in the message file.
+    $message = Get-Content -Path $TempFolder\message.txt
     $Text1 = New-BTText -Content  "Attention:"
-    #Put your message here
-    $Text2 = New-BTText -Content "Message goes here"
+    #Use the message file as the message
+    $Text2 = New-BTText -Content "$message"
     $Button = New-BTButton -Content "Snooze" -snooze -id 'SnoozeTime'
     $Button2 = New-BTButton -Content "Dismiss" -dismiss
     $5Min = New-BTSelectionBoxItem -Id 5 -Content '5 minutes'
@@ -77,3 +92,7 @@ invoke-ascurrentuser -scriptblock {
     $Content = New-BTContent -Visual $Visual -Actions $action
     Submit-BTNotification -Content $Content
 }
+
+Start-Sleep 3
+#Delete the message file
+Remove-Item $TempFolder\message.txt -Force
