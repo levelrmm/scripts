@@ -18,6 +18,16 @@ our community repo!
 #To easily find app names check https://winstall.app/ or https://winget.run/
 $App = "Notepad++.Notepad++", "Google.Chrome"
 
+#If Visual C++ Redistributable 2022 not present, download and install. (Winget Dependency)
+if (Get-WmiObject -Class Win32_Product -Filter "Name LIKE '%Visual C++ 2022%'") {
+    Write-Host "VC++ Redistributable 2022 already installed"
+}
+else {
+    Write-Host "Installing Visual C++ Redistributable"
+    #Permalink for latest supported x64 version
+    Invoke-Webrequest -uri https://aka.ms/vs/17/release/vc_redist.x64.exe -Outfile $InstallerFolder\vc_redist.x64.exe
+    Start-Process "$InstallerFolder\vc_redist.x64.exe" -Wait -ArgumentList "/q /norestart"
+}
 
 $TestWinget = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq "Microsoft.DesktopAppInstaller" }
 $TestEnvPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") -like "*C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe*"
