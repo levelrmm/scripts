@@ -5,7 +5,7 @@ to your production environment.  We welcome contribution to the scripts in
 our community repo!
 
 .DESCRIPTION
-    Join computer to Active Directory domain and reboot
+    Work in Progress
 .LANGUAGE
     PowerShell
 .TIMEOUT
