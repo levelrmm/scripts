@@ -4,14 +4,8 @@ guarantee this will work in all environments. Please test before deploying
 to your production environment.  We welcome contribution to the scripts in 
 our community repo!
 .DESCRIPTION
-    List all enabled users in Active Directory, ordered by last login time. 
-    Useful for finding stale active accounts that should be disabled. If 
-    the last login field is blank it means the account has never logged
-    in.
-
-    Keep in mind that service accounts are only logged in when the service
-    starts.  If a service is running for 90-days straight, then the last
-    login will be 90 days ago.
+    List all Computers in Active Directory, ordered by last login time. 
+    Useful for finding stale computers that should be removed.
 
 .LANGUAGE
     PowerShell
@@ -20,5 +14,5 @@ our community repo!
 .LINK
 #>
 
-#Get all AD users and sort by last logon
-Get-ADUser -Filter {(Enabled -eq $true)} -Properties LastLogonDate | select samaccountname, Name, LastLogonDate | Sort-Object LastLogonDate
+
+Get-ADComputer -Filter  {OperatingSystem -Like '*' } -Properties lastlogondate,operatingsystem |select name,lastlogondate,operatingsystem | Sort-Object lastlogondate
