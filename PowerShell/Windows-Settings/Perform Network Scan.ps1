@@ -5,7 +5,10 @@ to your production environment.  We welcome contribution to the scripts in
 our community repo!
 
 .DESCRIPTION
-    Work in Progress
+    Detect the primary IP address of the device and perform a network scan
+    looking for TCP ports 22,23,80,443,3389.  Also perform name lookup and
+    pull the manufacturer from the MAC address.
+
 .LANGUAGE
     PowerShell
 .TIMEOUT
@@ -13,41 +16,56 @@ our community repo!
 .LINK
 #>
 
-#Prepare Script
-$ErrorActionPreference = "Continue"
-$Output = @()
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-#$Records=Import-CSV C:\Scripts\Oui.csv
+#Check for NuGet on the device and install if not present
+if (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue) {
+    #Write-Host "NuGet Package already exists"
+}
+else {
+    Write-host "Installing NuGet"
+    Install-PackageProvider -Name NuGet -force
+}   
 
-# Ping Search
-$IPs = 1..254 | ForEach -Process { WmiObject -Class Win32_PingStatus -Filter ("Address='10.0.0." + $_ + "'") }
-$DevicesOnly = $IPs | Where-Object { $_.StatusCode -eq 0 }
-
-
-#Extract Data
-ForEach ($Device in $DevicesOnly) {
-    $Address = $Device.ProtocolAddress
-    $MAC = arp -a $Address | Select-String '([0-9a-f]{2}-){5}[0-9a-f]{2}' | Select-Object -Expand Matches | Select-Object -Expand Value
-    # https://stackoverflow.com/questions/41632656/getting-the-mac-address-by-arp-a
-    $DNSName = Resolve-DNSName -Name $Address -Server 8.8.8.8 | Select-Object NameHost
-    $HostName = $DNSName.NameHost
-    $PCMAC = $MAC.SubString(0, 8) + ' '
-    <#
-            ForEach ($Record in $Records){ 
-                        If ($Record.MAC -eq $PCMAC){
-                        $Vendor=$Record.Vendor        
-            } 
-    }         
-#>
-
-    #Write Data to Object
-    $Systems = New-Object -TypeName PSObject
-    $Systems | Add-Member -Type NoteProperty -Name IP -Value $Address
-    $Systems | Add-Member -Type NoteProperty -Name MAC -Value $Mac
-    $Systems | Add-Member -Type NoteProperty -Name Hostname -Value $HostName
-    #$Systems | Add-Member -Type NoteProperty -Name Vendor -Value $Vendor
-    $Output += $Systems
+#Check for dependent modules and install if not present
+Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+$ModuleList = "AdminToolbox.Networking"
+foreach ($Module in $ModuleList) {
+    if (Get-Module -ListAvailable -Name $Module -ErrorAction SilentlyContinue) {
+        #Write-Host "$Module module already exists"
+    } 
+    else {
+        Write-Host "$Module does not exist. Installing"
+        Install-Module -Name $Module -Force -AllowClobber
+    }
 }
 
-#Write Output
-$Output | Select-Object Hostname, IP, MAC | Format-Table
+#Get the primary IP address of the device and put it in CIDR notation
+$PrimaryIP = Find-NetRoute -RemoteIPAddress 0.0.0.0 | select *IPAddress*, *PrefixLength*
+[string]$IP = $PrimaryIP.IPAddress
+[string]$mask = $PrimaryIP.PrefixLength
+$IP = $IP.trim()
+$mask = $mask.Trim()
+
+#Check if the subnet mask is too large to scan in a reasonable time
+if ($mask -le 21) {
+    Write-Host "This /$mask network is too large to scan in a timely manner!"
+    exit 1
+}
+$IPandMask = $IP + "/" + $mask
+
+Write-Host "Beginning network scan. This may take a few minutes depending on the size of the network."
+
+#Start the network scan and format the table for good readability
+Invoke-NetworkScan -CIDR $IPandMask  | Format-Table -Property `
+@{Name = "IP"; expression = 'IP'; Width = 15 }, `
+@{Name = "Hostname"; expression = 'Hostname'; Width = 30 }, `
+@{Name = "Ping"; expression = { $_.Ping -replace "False$", "-" }; Width = 4 }, `
+@{Name = "SSH"; expression = { $_.'ssh(22)' -replace "False$", "-" }; Width = 4 }, `
+@{Name = "Telnet"; expression = { $_.'telnet(23)' -replace "False$", "-" }; Width = 6 }, `
+@{Name = "HTTP"; expression = { $_.'http(80)' -replace "False$", "-" }; Width = 4 }, `
+@{Name = "HTTPS"; expression = { $_.'https(443)' -replace "False$", "-" }; Width = 5 }, `
+@{Name = "RDP"; expression = { $_.'rdp(3389)' -replace "False$", "-" }; Width = 4; Align = "center" }, `
+@{Name = "Mac Address"; expression = 'MacAddress'; Width = 17 }, `
+@{Name = "Vendor"; expression = { $_.vendor -replace '(.+?)~.+', '$1' }; Width = 24 } -wrap
+
