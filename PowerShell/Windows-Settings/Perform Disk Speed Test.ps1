@@ -10,7 +10,7 @@ our community repo!
 
     -d60 (run test for 60 seconds)
     -t2 (2 threads)
-    -c512M (Create a 512MB file)
+    -c128M (Create a 128MB file)
     -L (also measure latency statistics)
     -r (random I/O)
     -Sh (Disable both software caching and hardware write caching)
@@ -30,9 +30,15 @@ $AppName = $AppExecutable.split(".")[0]
 $TempFolder = 'C:\temp\'
 $AppFullPath = $TempFolder + $AppName + "\amd64" + "\$AppExecutable"
 
+#Need at least PowerShell version 5 for Expand-Archive
+if ($PSVersionTable.PSVersion.Major -lt 5) {
+    Write-Output "This script requires PowerShell version 5 or above."
+    exit 1
+}
+
 function RunApp() {
     write-host "Running the test for 60 seconds." -ForegroundColor Green
-    $AppOutput = & $AppFullPath -d60 -t2 -c512M -L -r -w50 $TempFolder"disk-speed-test.dat" #| Tee-Object -Variable AppOutput
+    $AppOutput = & $AppFullPath -d60 -t2 -c128M -L -r -w50 $TempFolder"disk-speed-test.dat" #| Tee-Object -Variable AppOutput
 
     #Convert the output to an array.  (Using regex kept losing formatting)
     $lines = $AppOutput -split "`r`n"
@@ -50,21 +56,21 @@ function RunApp() {
     $itemsToAdd = @(
         @{
             'Type'    = "Read"
-            'Latency' = $ReadValues[4].Trim()
-            'MiB/s'   = $ReadValues[2].Trim()
-            'IOPS'    = $ReadValues[3].Trim()
+            'Latency' = [decimal]$ReadValues[4].Trim()
+            'MBsec'   = [int]$ReadValues[2].Trim()
+            'IOPS'    = [int]$ReadValues[3].Trim()
         },
         @{
             'Type'    = "Write"
-            'Latency' = $WriteValues[4].Trim()
-            'MiB/s'   = $WriteValues[2].Trim()
-            'IOPS'    = $WriteValues[3].Trim()
+            'Latency' = [decimal]$WriteValues[4].Trim()
+            'MBsec'   = [int]$WriteValues[2].Trim()
+            'IOPS'    = [int]$WriteValues[3].Trim()
         },
         @{
             'Type'    = "Total"
-            'Latency' = $TotalValues[4].Trim()
-            'MiB/s'   = $TotalValues[2].Trim()
-            'IOPS'    = $TotalValues[3].Trim()
+            'Latency' = [decimal]$TotalValues[4].Trim()
+            'MBsec'   = [int]$TotalValues[2].Trim()
+            'IOPS'    = [int]$TotalValues[3].Trim()
         }
     )
     $IOResults = $itemsToAdd | ForEach-Object {
@@ -72,12 +78,20 @@ function RunApp() {
     }
     
     #Print results
-    $IOResults
+    $IOResults | Select-Object Type, Latency, MBsec, IOPS
 
     #Alert on poor performance
-    foreach ($Items in $IOResults.Latency) {
-        if ($Items -ge 20) {
-            Write-host -ForegroundColor red "The latency of $Items ms is high.  Please check the storage on this device"
+    foreach ($Latency in $IOResults.Latency) {
+        if ($Latency -ge 20) {
+            Write-host -ForegroundColor red "The latency of $Latency ms is high.  Please check the storage on this device"
+        }
+        else {
+            #Write-host -ForegroundColor green "The latency of $Items ms is good" 
+        }
+    }
+    foreach ($MBsec in $IOResults.MBsec) {
+        if ($MBsec -le 1000) {
+            Write-host -ForegroundColor red "The throughput of $MBsec MB/s is low.  Please check the storage on this device"
         }
         else {
             #Write-host -ForegroundColor green "The latency of $Items ms is good" 
@@ -93,7 +107,6 @@ else {
 
 #Check if the file exists
 if (Test-Path -path $AppFullPath -ErrorAction SilentlyContinue) {
-    Write-Host "Running the test for 60 seconds." -ForegroundColor Green
     RunApp
 }
 else {
