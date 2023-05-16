@@ -18,6 +18,12 @@ our community repo!
 #To easily find app names check https://winstall.app/ or https://winget.run/
 $App = "Notepad++.Notepad++", "Google.Chrome"
 
+#Setup temp folder
+$InstallerFolder = "c:\temp"
+if (!(Test-Path $InstallerFolder)) {
+    New-Item -Path $InstallerFolder -ItemType Directory -Force -Confirm:$false
+}
+
 #If Visual C++ Redistributable 2022 not present, download and install. (Winget Dependency)
 if (Get-WmiObject -Class Win32_Product -Filter "Name LIKE '%Visual C++ 2022%'") {
     Write-Host "VC++ Redistributable 2022 already installed"
