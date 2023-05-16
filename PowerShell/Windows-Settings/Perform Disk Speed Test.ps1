@@ -104,6 +104,9 @@ function RunApp() {
             $BadPerformance = 1
         }
     }
+    #Delete the temp test file 
+    Remove-Item $TempFolder"disk-speed-test.dat" -force
+   
     if ($BadPerformance) {
         exit 1
     }
