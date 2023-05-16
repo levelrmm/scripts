@@ -5,7 +5,13 @@ to your production environment.  We welcome contribution to the scripts in
 our community repo!
 
 .DESCRIPTION
-    Download diskspd and run a disk performance benchmark
+    Download diskspd and run a disk performance benchmark.  Notify if the 
+    latency or MB/s are now performing well.  Thresholds are currently set
+    to:
+
+    Latency < 20 ms
+    MB/s    < 1000 MB/s
+
     The default test paramaters are:
 
     -d60 (run test for 60 seconds)
@@ -16,6 +22,8 @@ our community repo!
     -Sh (Disable both software caching and hardware write caching)
     -w50 (50% write and read)
     
+    This can probably be improved to loop through various block sizes and
+    and other variations, but this will provide a good quick check.
     Details on all the paramaters can be found here: https://github.com/Microsoft/diskspd/wiki/Command-line-and-parameters
 
 .LANGUAGE
@@ -65,40 +73,43 @@ function RunApp() {
             'Latency' = [decimal]$WriteValues[4].Trim()
             'MBsec'   = [int]$WriteValues[2].Trim()
             'IOPS'    = [int]$WriteValues[3].Trim()
-        },
+        }
+        <#  Do we really need the total?  The focus should be on read/write individually because one can be great and the other poor
+        ,
         @{
             'Type'    = "Total"
             'Latency' = [decimal]$TotalValues[4].Trim()
             'MBsec'   = [int]$TotalValues[2].Trim()
             'IOPS'    = [int]$TotalValues[3].Trim()
         }
+        #>
     )
     $IOResults = $itemsToAdd | ForEach-Object {
         [PSCustomObject]$_
     }
     
     #Print results
-    $IOResults | Select-Object Type, Latency, MBsec, IOPS
+    $IOResults | Select-Object Type, Latency, MBsec, IOPS | format-table -AutoSize
 
     #Alert on poor performance
     foreach ($Latency in $IOResults.Latency) {
         if ($Latency -ge 20) {
-            Write-host -ForegroundColor red "The latency of $Latency ms is high.  Please check the storage on this device"
-        }
-        else {
-            #Write-host -ForegroundColor green "The latency of $Items ms is good" 
+            Write-host -ForegroundColor red "The latency of $Latency ms is high.  Disk performance should be investigated."
+            $BadPerformance = 1
         }
     }
     foreach ($MBsec in $IOResults.MBsec) {
         if ($MBsec -le 1000) {
-            Write-host -ForegroundColor red "The throughput of $MBsec MB/s is low.  Please check the storage on this device"
+            Write-host -ForegroundColor red "The throughput of $MBsec MB/s is low.  Disk performance should be investigated"
+            $BadPerformance = 1
         }
-        else {
-            #Write-host -ForegroundColor green "The latency of $Items ms is good" 
-        }
+    }
+    if ($BadPerformance) {
+        exit 1
     }
 }
 
+#Check for temp path
 if (Test-Path -Path $TempFolder -ErrorAction SilentlyContinue) {
 }
 else {
@@ -118,17 +129,17 @@ else {
     $BaseURL = "https://github.com/microsoft/diskspd/releases/download/v2.0.21a/"
     $Download = "DiskSpd.zip"
     
-    #If multiple files are needed, enter them comma separated. 
+    #If multiple files are needed from the same base URL, enter them comma separated. 
     $ListOfFiles = $Download
     
-    #Download file(s) to temp folder
+    #Download file(s) to temp folder and report on size
     foreach ($File in $ListOfFiles) {
         Invoke-WebRequest -uri $BaseURL$File -outfile $TempFolder$File
         $FileSize = [math]::round((Get-Item -Path $TempFolder$File).Length / 1MB, 2)
         "Downloaded $File - $FileSize MB"
     }
     
-    #Unzip the file
+    #Unzip the file and run the app
     Expand-Archive -Path $TempFolder$File -DestinationPath $TempFolder$AppName
     RunApp
 }
