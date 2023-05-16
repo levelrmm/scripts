@@ -44,6 +44,13 @@ if ($PSVersionTable.PSVersion.Major -lt 5) {
     exit 1
 }
 
+#Check for free disk space to download the app and to run the test. (A 128MB file is created for the test)
+$FreeSpace = get-volume (get-location).Drive.Name | select -ExpandProperty SizeRemaining
+if ($FreeSpace -le 250000000) {
+    Write-Host "Not enough space on the disk to run the disk performance test"
+    exit 1
+}
+
 function RunApp() {
     write-host "Running the test for 60 seconds." -ForegroundColor Green
     $AppOutput = & $AppFullPath -d60 -t2 -c128M -L -r -w50 $TempFolder"disk-speed-test.dat" #| Tee-Object -Variable AppOutput

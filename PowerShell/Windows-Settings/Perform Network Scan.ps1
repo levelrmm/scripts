@@ -67,5 +67,5 @@ Invoke-NetworkScan -CIDR $IPandMask  | Format-Table -Property `
 @{Name = "HTTPS"; expression = { $_.'https(443)' -replace "False$", "-" }; Width = 5 }, `
 @{Name = "RDP"; expression = { $_.'rdp(3389)' -replace "False$", "-" }; Width = 4; Align = "center" }, `
 @{Name = "Mac Address"; expression = 'MacAddress'; Width = 17 }, `
-@{Name = "Vendor"; expression = { $_.vendor -replace '(.+?)~.+', '$1' }; Width = 22 } -wrap
+@{Name = "Vendor"; expression = { $_.vendor -replace '(.+?)(?:~|,).+', '$1' }; Width = 22 } -wrap
 
