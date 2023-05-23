@@ -54,7 +54,7 @@ if ($mask -le 21) {
 }
 $IPandMask = $IP + "/" + $mask
 
-Write-Host "Beginning network scan. This may take a few minutes depending on the size of the network."
+Write-Host "Beginning network scan for $IPandMask. This may take a few minutes depending on the size of the network."
 
 #Start the network scan and format the table for good readability
 Invoke-NetworkScan -CIDR $IPandMask  | Format-Table -Property `
