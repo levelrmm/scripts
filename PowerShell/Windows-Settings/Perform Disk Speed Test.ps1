@@ -56,6 +56,7 @@ function RunApp() {
     $AppOutput = & $AppFullPath -d60 -t2 -c128M -L -r -w50 $TempFolder"disk-speed-test.dat" #| Tee-Object -Variable AppOutput
 
     #Convert the output to an array.  (Using regex kept losing formatting)
+    #Much of what follows is to preserve formatting and make the output a PowerShell cusomt object
     $lines = $AppOutput -split "`r`n"
 
     #Select the lines that contain the read, write, and totals 
