@@ -5,11 +5,9 @@ to your production environment.  We welcome contribution to the scripts in
 our community repo!
 
 .DESCRIPTION
-    Send a message to the logged in user using a Windows native 
-    notification 
+    Send a message to the logged in user using a legacy style pop-up
     
     Uses the following PowerShell Modules:
-    https://github.com/Windos/BurntToast - Toast Library
     https://github.com/KelvinTegelaar/RunAsUser - To run as logged-in user
 .LANGUAGE
     PowerShell
