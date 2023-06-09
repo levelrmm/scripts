@@ -20,7 +20,7 @@ our community repo!
 
 #Enter the notification message here.
 $Message_file = @"
-Insert your message here
+'Hello, Windows updates and system maintenance will be performed tonight, starting at 9pm. Please close all applications at the end of day and leave the PC powered on. Thank you!', 'Your IT Dept - Computer Maintenance Tonight', 'Ok', 'Info'
 "@
 
 #Check if a user is logged in.  Can't send a toast to no one!
@@ -47,7 +47,7 @@ else {
 
 #Check for dependent modules and install if not present
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-$ModuleList = "BurntToast", "RunAsUser"
+$ModuleList = "RunAsUser"
 foreach ($Module in $ModuleList) {
     if (Get-Module -ListAvailable -Name $Module -ErrorAction SilentlyContinue) {
         Write-Host "$Module module already exists"
@@ -73,24 +73,8 @@ invoke-ascurrentuser -scriptblock {
     $TempFolder = 'C:\temp'
     #Read in the message file.
     $message = Get-Content -Path $TempFolder\message.txt
-    $Text1 = New-BTText -Content  "Attention:"
-    #Use the message file as the message
-    $Text2 = New-BTText -Content "$message"
-    $Button = New-BTButton -Content "Snooze" -snooze -id 'SnoozeTime'
-    $Button2 = New-BTButton -Content "Dismiss" -dismiss
-    $5Min = New-BTSelectionBoxItem -Id 5 -Content '5 minutes'
-    $10Min = New-BTSelectionBoxItem -Id 10 -Content '10 minutes'
-    $1Hour = New-BTSelectionBoxItem -Id 60 -Content '1 hour'
-    $4Hour = New-BTSelectionBoxItem -Id 240 -Content '4 hours'
-    $1Day = New-BTSelectionBoxItem -Id 1440 -Content '1 day'
-    $Items = $5Min, $10Min, $1Hour, $4Hour, $1Day
-    $SelectionBox = New-BTInput -Id 'SnoozeTime' -DefaultSelectionBoxItemId 10 -Items $Items
-    $action = New-BTAction -Buttons $Button, $Button2 -inputs $SelectionBox
-    $heroimage = New-BTImage -Source 'https://raw.githubusercontent.com/levelsoftware/scripts/main/Level_Logo_Animation.gif' -HeroImage
-    $Binding = New-BTBinding -Children $text1, $text2 -HeroImage $heroimage
-    $Visual = New-BTVisual -BindingGeneric $Binding
-    $Content = New-BTContent -Visual $Visual -Actions $action
-    Submit-BTNotification -Content $Content
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show($message)
 }
 
 Start-Sleep 3
