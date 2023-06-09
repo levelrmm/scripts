@@ -32,9 +32,7 @@ else {
 }   
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
 #Check for NuGet on the device and install if not present
-Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
 if (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue) {
     Write-Host "NuGet Package already exists"
 }
