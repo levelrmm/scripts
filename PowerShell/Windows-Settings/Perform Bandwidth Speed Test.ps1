@@ -10,7 +10,7 @@ our community repo!
 .LANGUAGE
     PowerShell
 .TIMEOUT
-    100
+    300
 .LINK
 #>
 
