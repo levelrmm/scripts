@@ -38,5 +38,5 @@ $EventLogResults = Get-WinEvent -LogName Security -FilterXPath @'
 
 #If the event exists, return "Change!" for the Level script-based monitor to alert
 if ($EventLogResults.Id -eq 4732) {
-    Write-Host "Change!"
+    Write-Host "Alert!"
 }
