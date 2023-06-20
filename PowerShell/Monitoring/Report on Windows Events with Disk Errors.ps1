@@ -18,12 +18,9 @@ our community repo!
 $ErrorActionPreference = 'silentlycontinue'
 $TimeSpan = (Get-Date) - (New-TimeSpan -Day 1)
 if (Get-WinEvent -FilterHashtable @{LogName = 'system'; ID = '11', '9', '15', '52', '129', '7', '98'; Level = 2, 3; ProviderName = '*disk*', '*storsvc*', '*ntfs*'; StartTime = $TimeSpan } -MaxEvents 10 | Where-Object -Property Message -Match Volume*) {
-    Write-Output "Disk errors detected please investigate"
-    Get-WinEvent -FilterHashtable @{LogName = 'system'; ID = '11', '9', '15', '52', '129', '7', '98'; Level = 2, 3; ProviderName = '*disk*', '*storsvc*', '*ntfs*'; StartTime = $TimeSpan }
+    Write-Output "Alert!"
     exit 1
 }
-
-
 else {
     Write-Output "Disks are Healthy"
     exit 0
