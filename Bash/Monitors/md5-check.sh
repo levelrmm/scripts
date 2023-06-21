@@ -20,7 +20,7 @@
 # -----------------------------------------------------------------------------
 # Script: Linux Monitor - MD5 Check
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ supplied_hash=""
 
 # Check if the file exists
 if [ ! -f "$file_path" ]; then
-  echo "ERROR: File does not exist: $file_path"
+  echo "ALERT: File does not exist: $file_path"
   exit 1
 fi
 
@@ -51,7 +51,7 @@ calculated_hash=$(md5sum "$file_path" | awk '{print $1}')
 if [ "$calculated_hash" == "$supplied_hash" ]; then
   echo "SUCCESS: The MD5 hash of $file_path matches the supplied hash."
 else
-  echo "ERROR: The MD5 hash of $file_path does not match the supplied hash."
+  echo "ALERT: The MD5 hash of $file_path does not match the supplied hash."
   echo "Expected hash: $supplied_hash"
   echo "Calculated hash: $calculated_hash"
 fi

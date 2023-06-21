@@ -20,7 +20,7 @@
 # -----------------------------------------------------------------------------
 # Script: Linux Monitor - System Uptime
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Hours
 # Duration: 12
 # -----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ uptime=$(printf "%.0f" "$uptime_days")
 
 # If threshold breached, generate an alert
 if (( uptime > uptime_policy )); then
-  echo -e "ERROR: device uptime expected to be less than $uptime_policy. Uptime was $uptime days.\n"
+  echo -e "ALERT: device uptime expected to be less than $uptime_policy. Uptime was $uptime days.\n"
 else
   echo "SUCCESS"
 fi

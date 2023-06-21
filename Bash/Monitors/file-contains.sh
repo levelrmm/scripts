@@ -19,7 +19,7 @@
 # -----------------------------------------------------------------------------
 # Script: Linux Monitor - File Contains
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 1
 # -----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ if [ -f "$file_path" ]; then
   if grep -q "$search_string" "$file_path"; then
     echo "SUCCESS: The string '$search_string' exists in the file."
   else
-    echo "ERROR: The string '$search_string' does not exist in the file."
+    echo "ALERT: The string '$search_string' does not exist in the file."
   fi
 else
   echo "ERROR: File not found: $file_path"

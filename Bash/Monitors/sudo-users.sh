@@ -22,7 +22,7 @@
 # -----------------------------------------------------------------------------
 # Script: Linux Monitor - Sudo Users
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ done
 
 # Check if any unexpected users were found
 if [ $unexpected_count -gt 0 ]; then
-  echo -e "ERROR: $unexpected_count unexpected sudo users found\n"
+  echo -e "ALERT: $unexpected_count unexpected sudo users found\n"
   echo "Unexpected sudo users found: $unexpected_users"
 else
   echo "SUCCESS"
