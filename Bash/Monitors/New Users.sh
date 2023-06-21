@@ -11,8 +11,8 @@
 # -----------------------------------------------------------------------------
 # Name: Linux Monitor - New Users
 # Description: This recurring script checks for unexpected users in /etc/passwd 
-#   every 5 minutes, alerts only for non-excluded users, and displays an error 
-#   message with the list of unexpected users if any are found.
+# every 5 minutes, alerts only for non-excluded users, and displays an error 
+# message with the list of unexpected users if any are found.
 # Language: Bash
 # Timeout: 100
 # Version: 1.0

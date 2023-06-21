@@ -29,7 +29,7 @@
 # - search_string
 
 # Specify the file path to check
-$file_path = "C:\path\to\file.txt"
+$file_path = "C:\file.txt"
 
 # Specify the string to search for in the file
 $search_string = "example"

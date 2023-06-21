@@ -1,6 +1,8 @@
 # -----------------------------------------------------------------------------
-# This script is provided as a convenience. Please test before deploying to
-# your production environment.
+# This script is provided as a convenience for Level.io customers. We cannot 
+# guarantee this will work in all environments. Please test before deploying
+# to your production environment.  We welcome contribution to the scripts in 
+# our community repo!
 # -----------------------------------------------------------------------------
 #
 # -----------------------------------------------------------------------------
@@ -11,7 +13,6 @@
 # Language: PowerShell
 # Timeout: 100
 # Version: 1.0
-#
 # -----------------------------------------------------------------------------
 # Monitor Configuration
 # -----------------------------------------------------------------------------
@@ -27,7 +28,7 @@
 # - file_path
 
 # Specify the file path to check for existence
-$file_path = "/path/to/file.txt"
+$file_path = "C:\file.txt"
 # -----------------------------------------------------------------------------
 
 # Check if the file exists

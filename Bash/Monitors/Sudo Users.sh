@@ -13,7 +13,6 @@
 # Description: This script identifies unexpected sudo users, excluding those in
 # the excluded list. It alerts for any unexpected sudo users found and displays 
 # an error message with the list of unexpected users if any are detected.
-#
 # Language: Bash
 # Timeout: 100
 # Version: 1.0

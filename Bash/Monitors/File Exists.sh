@@ -9,7 +9,7 @@
 # -----------------------------------------------------------------------------
 # Script Configuration
 # -----------------------------------------------------------------------------
-# Name: Linux Monitor - File Existence
+# Name: Linux Monitor - File Exists
 # Description: This recurring script checks for the existence of a specific file.
 # Language: Bash
 # Timeout: 100
@@ -18,7 +18,7 @@
 # -----------------------------------------------------------------------------
 # Monitor Configuration
 # -----------------------------------------------------------------------------
-# Script: Linux Monitor - File Existence
+# Script: Linux Monitor - File Exists
 # Script output: Contains
 # Output value: "file exists" or "not found"
 # Run frequency: Minutes
