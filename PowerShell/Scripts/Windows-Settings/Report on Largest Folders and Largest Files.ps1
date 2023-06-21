@@ -15,7 +15,7 @@ our community repo!
 #>
 
 #Adjust to reflect the drive letter.  Subfolder path may also be added in the entire drive does not need to be examined
-$Drive = "c:\temp"
+$Drive = "c:\"
 $folderList = @()
 
 #Report on folder sizes
@@ -29,7 +29,7 @@ Get-ChildItem -Path "$Drive" -force -Directory | ForEach-Object {
         'Size(GB)'  = "$sizeInGB"
     }
     #Add the results to array $folderList
-    $folderList.Add($ResultItems) | Out-Null
+    $folderList += $ResultItems | Out-Null
 }
 $folderList | Out-Default
 
