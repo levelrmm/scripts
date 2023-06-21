@@ -20,7 +20,7 @@
 # -----------------------------------------------------------------------------
 # Script: Windows Monitor - Open Ports
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ foreach ($port in $open_ports) {
 
 # Check if any unauthorized ports were found
 if ($unauthorized_count -gt 0) {
-    Write-Host "ERROR: $unauthorized_count unauthorized inbound ports found"
+    Write-Host "ALERT: $unauthorized_count unauthorized inbound ports found"
     Write-Host "Unauthorized inbound ports in use:"
     $unauthorized_ports | ForEach-Object { Write-Host $_ }
 }

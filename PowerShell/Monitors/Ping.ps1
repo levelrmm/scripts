@@ -20,7 +20,7 @@
 # -----------------------------------------------------------------------------
 # Script: Windows Monitor - Ping
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ for ($i = 1; $i -le $ping_count; $i++) {
 }
 
 if ($consecutive_failures -ge $consecutive_failures_threshold) {
-  Write-Host ("`nERROR: " + $consecutive_failures_threshold + " consecutive pings to " + $host_to_ping + " failed")
+  Write-Host ("`nALERT: " + $consecutive_failures_threshold + " consecutive pings to " + $host_to_ping + " failed")
 }
 elseif ($failed_pings -gt 0) {
   Write-Host ("`nWARNING: " + $failed_pings + " out of " + $ping_count + " pings to " + $host_to_ping + " failed")

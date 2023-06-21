@@ -8,43 +8,40 @@
 # -----------------------------------------------------------------------------
 # Script Configuration
 # -----------------------------------------------------------------------------
-# Name: Windows Monitor - File Contains
-# Description: This script checks the contents of a file for a specific string.
+# Name: Windows Monitor - System Uptime
+# Description: Check for uptime of the computer
 # Language: PowerShell
 # Timeout: 100
 # Version: 1.0
 # -----------------------------------------------------------------------------
 # Monitor Configuration
 # -----------------------------------------------------------------------------
-# Script: Windows Monitor - File Contains
+# Script: Windows Monitor - System Uptime
 # Script output: Contains
-# Output value: ERROR
-# Run frequency: Minutes
-# Duration: 5
+# Output value: ALERT
+# Run frequency: Hours
+# Duration: 12
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 # CONFIGURE
-# - file_path
-# - search_string
+# - uptime_policy
 
-# Specify the file path to check
-$file_path = "C:\file.txt"
-
-# Specify the string to search for in the file
-$search_string = "example"
+# Number of days before an alert
+$uptime_policy = 45
 # -----------------------------------------------------------------------------
 
-# Check if the file exists
-if (Test-Path -Path $file_path) {
-    $file_content = Get-Content -Path $file_path -Raw
-    if ($file_content -like "*$search_string*") {
-        Write-Host "SUCCESS: The string '$search_string' exists in the file."
-    }
-    else {
-        Write-Host "ERROR: The string '$search_string' does not exist in the file."
-    }
+# Get uptime of device
+$uptime = (Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime | Select-Object -ExpandProperty TotalDays
+
+# Round it to a whole number
+$uptime = [math]::Round($uptime)
+
+if ($uptime -gt $uptime_policy) {
+    # If threshold breached, generate an alert
+    Write-Host "ALERT"
 }
 else {
-    Write-Host "ERROR: File not found: $file_path"
+    # Uptime within acceptable range, output success message
+    Write-Host "SUCCESS"
 }
