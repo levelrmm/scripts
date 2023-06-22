@@ -23,7 +23,7 @@
 # -----------------------------------------------------------------------------
 # Script: Windows Monitor - Admin Users
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ foreach ($user in $admin_users) {
 
 # Check if any unexpected users were found
 if ($unexpected_count -gt 0) {
-  Write-Host "ERROR: $unexpected_count unexpected admin users found"
+  Write-Host "ALERT: $unexpected_count unexpected admin users found"
   Write-Host "Unexpected admin users found: $unexpected_users"
 }
 else {

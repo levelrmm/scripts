@@ -21,7 +21,7 @@
 # -----------------------------------------------------------------------------
 # Script: Linux Monitor - SSH Keys
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ done
 
 # Check if any unauthorized keys were found
 if [[ ${#unauthorized_keys[@]} -gt 0 ]]; then
-  echo "ERROR: Unauthorized SSH key entries found in authorized_keys files for the following users:"
+  echo "ALERT: Unauthorized SSH key entries found in authorized_keys files for the following users:"
   for key in "${unauthorized_keys[@]}"; do
     echo "- $key"
   done

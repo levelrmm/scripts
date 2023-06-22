@@ -1,4 +1,3 @@
-#!/bin/bash
 # -----------------------------------------------------------------------------
 # This script is provided as a convenience for Level.io customers. We cannot 
 # guarantee this will work in all environments. Please test before deploying
@@ -9,16 +8,15 @@
 # -----------------------------------------------------------------------------
 # Script Configuration
 # -----------------------------------------------------------------------------
-# Name: Linux Monitor - MD5 Check
-# Description: This script compares the MD5 hash of a file with a supplied hash.
-# Language: Bash
+# Name: Windows Monitor - File Contains
+# Description: This script checks the contents of a file for a specific string.
+# Language: PowerShell
 # Timeout: 100
 # Version: 1.0
-#
 # -----------------------------------------------------------------------------
 # Monitor Configuration
 # -----------------------------------------------------------------------------
-# Script: Linux Monitor - MD5 Check
+# Script: Windows Monitor - File Contains
 # Script output: Contains
 # Output value: ALERT
 # Run frequency: Minutes
@@ -28,30 +26,25 @@
 # -----------------------------------------------------------------------------
 # CONFIGURE
 # - file_path
-# - supplied_hash
+# - search_string
 
-# File path of the file to check
-file_path="/path/to/file"
+# Specify the file path to check
+$file_path = "C:\file.txt"
 
-# Expected MD5 hash value
-supplied_hash=""
-
+# Specify the string to search for in the file
+$search_string = "example"
 # -----------------------------------------------------------------------------
 
 # Check if the file exists
-if [ ! -f "$file_path" ]; then
-  echo "ALERT: File does not exist: $file_path"
-  exit 1
-fi
-
-# Calculate the MD5 hash of the file
-calculated_hash=$(md5sum "$file_path" | awk '{print $1}')
-
-# Compare the calculated hash with the supplied hash
-if [ "$calculated_hash" == "$supplied_hash" ]; then
-  echo "SUCCESS: The MD5 hash of $file_path matches the supplied hash."
-else
-  echo "ALERT: The MD5 hash of $file_path does not match the supplied hash."
-  echo "Expected hash: $supplied_hash"
-  echo "Calculated hash: $calculated_hash"
-fi
+if (Test-Path -Path $file_path) {
+    $file_content = Get-Content -Path $file_path -Raw
+    if ($file_content -like "*$search_string*") {
+        Write-Host "SUCCESS: The string '$search_string' exists in the file."
+    }
+    else {
+        Write-Host "ALERT: The string '$search_string' does not exist in the file."
+    }
+}
+else {
+    Write-Host "ALERT: File not found: $file_path"
+}

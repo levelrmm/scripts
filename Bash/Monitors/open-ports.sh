@@ -21,7 +21,7 @@
 # -----------------------------------------------------------------------------
 # Script: Linux Monitor - Open Ports
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ done
 
 # Check if any unauthorized ports were found
 if [ $unauthorized_count -gt 0 ]; then
-  echo -e "ERROR: $unauthorized_count unauthorized ports found\n"
+  echo -e "ALERT: $unauthorized_count unauthorized ports found\n"
   echo "Unauthorized ports in use: $unauthorized_ports"
 else
   echo "SUCCESS"

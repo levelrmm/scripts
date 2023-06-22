@@ -1,4 +1,3 @@
-#!/bin/bash
 # -----------------------------------------------------------------------------
 # This script is provided as a convenience for Level.io customers. We cannot 
 # guarantee this will work in all environments. Please test before deploying
@@ -9,40 +8,30 @@
 # -----------------------------------------------------------------------------
 # Script Configuration
 # -----------------------------------------------------------------------------
-# Name: Linux Monitor - File Contains
-# Description: This script checks the contents of a file for a specific string.
-# Language: Bash
+# Name: Windows Monitor - Local Disk Errors
+# Description: Checks local disks for errors reported in event viewer within the 
+# last 24 hours
+# Language: PowerShell
 # Timeout: 100
 # Version: 1.0
+#
 # -----------------------------------------------------------------------------
 # Monitor Configuration
 # -----------------------------------------------------------------------------
-# Script: Linux Monitor - File Contains
+# Script: Windows Monitor - Local Disk Errors
 # Script output: Contains
 # Output value: ALERT
 # Run frequency: Minutes
-# Duration: 1
+# Duration: 5
 # -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
-# CONFIGURE
-# - file_path
-# - search_string
-
-# Specify the file path to check
-file_path="/path/to/file.txt"
-
-# Specify the string to search for in the file
-search_string="example"
-# -----------------------------------------------------------------------------
-
-# Check if the file exists
-if [ -f "$file_path" ]; then
-  if grep -q "$search_string" "$file_path"; then
-    echo "SUCCESS: The string '$search_string' exists in the file."
-  else
-    echo "ALERT: The string '$search_string' does not exist in the file."
-  fi
-else
-  echo "ERROR: File not found: $file_path"
-fi
+$ErrorActionPreference = 'silentlycontinue'
+$TimeSpan = (Get-Date) - (New-TimeSpan -Day 1)
+if (Get-WinEvent -FilterHashtable @{LogName = 'system'; ID = '11', '9', '15', '52', '129', '7', '98'; Level = 2, 3; ProviderName = '*disk*', '*storsvc*', '*ntfs*'; StartTime = $TimeSpan } -MaxEvents 10 | Where-Object -Property Message -Match Volume*) {
+    Write-Output "ALERT"
+    Exit 1
+}
+else {
+    Write-Output "Disks are Healthy"
+    Exit 0
+}

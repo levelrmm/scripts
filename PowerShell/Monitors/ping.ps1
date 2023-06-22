@@ -1,4 +1,3 @@
-#!/bin/bash
 # -----------------------------------------------------------------------------
 # This script is provided as a convenience for Level.io customers. We cannot 
 # guarantee this will work in all environments. Please test before deploying
@@ -9,19 +8,19 @@
 # -----------------------------------------------------------------------------
 # Script Configuration
 # -----------------------------------------------------------------------------
-# Name: Linux Monitor - Ping
+# Name: Windows Monitor - Ping
 # Description: This script performs a series of 30 pings to a host and displays
 # an error message if a series of consecutive pings fail.
-# Language: Bash
+# Language: PowerShell
 # Timeout: 30
 # Version: 1.0
 #
 # -----------------------------------------------------------------------------
 # Monitor Configuration
 # -----------------------------------------------------------------------------
-# Script: Linux Monitor - Ping
+# Script: Windows Monitor - Ping
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -32,37 +31,42 @@
 # - ping_count
 # - consecutive_failures_threshold
 
-host_to_ping="google.com"
-ping_count=30
-consecutive_failures_threshold=3
+$host_to_ping = "google.com"
+$ping_count = 30
+$consecutive_failures_threshold = 3
 
 # -----------------------------------------------------------------------------
 
-failed_pings=0
-consecutive_failures=0
+$failed_pings = 0
+$consecutive_failures = 0
 
-for ((i=1; i<=ping_count; i++)); do
-  ping_result=$(ping -c 1 "$host_to_ping" 2>&1)
+for ($i = 1; $i -le $ping_count; $i++) {
+  $ping_result = Test-Connection -ComputerName $host_to_ping -Count 1 -Quiet
 
-  if [ $? -ne 0 ]; then
-    echo -e "Ping $i: FAILED\n"
-    echo "Ping output: $ping_result"
-    failed_pings=$((failed_pings + 1))
-    consecutive_failures=$((consecutive_failures + 1))
-  else
-    echo "Ping $i: SUCCESS"
-    consecutive_failures=0
-  fi
+  if (-not $ping_result) {
+    Write-Host ("Ping " + $i + ": FAILED")
+    $failed_pings++
+    $consecutive_failures++
 
-  if [ $consecutive_failures -ge $consecutive_failures_threshold ]; then
+    # Additional ping output information can be obtained using the Test-Connection cmdlet if needed
+    # Write-Host "Ping output: $($ping_result | Out-String)"
+  }
+  else {
+    Write-Host ("Ping " + $i + ": SUCCESS")
+    $consecutive_failures = 0
+  }
+
+  if ($consecutive_failures -ge $consecutive_failures_threshold) {
     break
-  fi
-done
+  }
+}
 
-if [ $consecutive_failures -ge $consecutive_failures_threshold ]; then
-  echo -e "\nERROR: $consecutive_failures_threshold consecutive pings to $host_to_ping failed\n"
-elif [ $failed_pings -gt 0 ]; then
-  echo -e "\nWARNING: $failed_pings out of $ping_count pings to $host_to_ping failed\n"
-else
-  echo -e "\nSUCCESS: All $ping_count pings to $host_to_ping were successful\n"
-fi
+if ($consecutive_failures -ge $consecutive_failures_threshold) {
+  Write-Host ("`nALERT: " + $consecutive_failures_threshold + " consecutive pings to " + $host_to_ping + " failed")
+}
+elseif ($failed_pings -gt 0) {
+  Write-Host ("`nWARNING: " + $failed_pings + " out of " + $ping_count + " pings to " + $host_to_ping + " failed")
+}
+else {
+  Write-Host ("`nSUCCESS: All " + $ping_count + " pings to " + $host_to_ping + " were successful")
+}

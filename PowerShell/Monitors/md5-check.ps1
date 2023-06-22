@@ -19,7 +19,7 @@
 # -----------------------------------------------------------------------------
 # Script: Windows Monitor - MD5 Check
 # Script output: Contains
-# Output value: ERROR
+# Output value: ALERT
 # Run frequency: Minutes
 # Duration: 5
 # -----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ $suppliedHash = ""
 
 # Check if the file exists
 if (-not (Test-Path -Path $filePath -PathType Leaf)) {
-    Write-Error "ERROR: File does not exist: $filePath"
+    Write-Error "ALERT: File does not exist: $filePath"
     exit 1
 }
 
@@ -49,7 +49,7 @@ if ($calculatedHash -eq $suppliedHash) {
     Write-Output "SUCCESS: The MD5 hash of $filePath matches the supplied hash."
 }
 else {
-    Write-Output "ERROR: The MD5 hash of $filePath does not match the supplied hash."
+    Write-Output "ALERT: The MD5 hash of $filePath does not match the supplied hash."
     Write-Output "Expected hash: $suppliedHash"
     Write-Output "Calculated hash: $calculatedHash"
 }
