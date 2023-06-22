@@ -10,7 +10,7 @@ our community repo!
 .LANGUAGE
     PowerShell
 .TIMEOUT
-    100
+    300
 .LINK
 #>
 
@@ -19,19 +19,21 @@ $Drive = "c:\"
 $folderList = @()
 
 #Report on folder sizes
-Get-ChildItem -Path "$Drive" -force -Directory | ForEach-Object {
-    $size = Get-ChildItem -Path $_.FullName -Recurse -Force -erroraction SilentlyContinue | Measure-Object -Property Length -Sum
-    $sizeInGB = "{0:N2}" -f ($size.Sum / 1GB)
+$subfolders = Get-ChildItem $Drive -Directory | Sort-Object  
+foreach ($folder in $subfolders) {
+
+    $size = Get-ChildItem -Path $folder.FullName -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum
+    [decimal]$sizeInGB = "{0:N2}" -f ($size.Sum / 1GB)
 
     #Create a custom object to format the list
     $ResultItems = [PSCustomObject]@{
-        FolderName  = "$_.Name"
-        'Size(GB)'  = "$sizeInGB"
+        FolderName = "$folder"
+        'Size(GB)' = $sizeInGB
     }
     #Add the results to array $folderList
-    $folderList += $ResultItems | Out-Null
+    $folderList += $ResultItems
 }
-$folderList | Out-Default
+$folderList | Sort-Object -Property 'Size(GB)' -Descending | Out-Default
 
 #Report on top 25 largest files
 Write-Host "Largest files on $Drive"
