@@ -30,7 +30,7 @@ $LogName = "application"
 $ID = 1000
 #Chose the severity level of the event. (Critical 1, Error 2, Warning 3, Informational 4) Can be comma seperated list (don't use quotes)
 $EventSeverity = 2
-#Chose the provider name (source) of the event.  Can be comma seperated list.
+#Chose the provider name (source) of the event.
 $ProviderName = "Application Error"
 #Chose the timeframe (in minutes) in which to search.  Search the logs filtered to the past X minutes.
 $Timeframe = 300
