@@ -33,7 +33,7 @@ $EventSeverity = 2
 #Chose the provider name (source) of the event.
 $ProviderName = "Application Error"
 #Chose the timeframe (in minutes) in which to search.  Search the logs filtered to the past X minutes.
-$Timeframe = 300
+$Timeframe = 60
 
 $TimeSpan = (Get-Date) - (New-TimeSpan -Minutes $Timeframe)
 $ErrorActionPreference = 'silentlycontinue'
