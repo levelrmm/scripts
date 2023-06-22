@@ -44,7 +44,7 @@ if ($FreeSpace -le 250000000) {
 
 function RunApp {
     #write-host "Running the test for 60 seconds." -ForegroundColor Green
-    $AppOutput = & $AppFullPath -d60 -t2 -c128M -L -r -w50 (Join-Path -Path $TempFolder -ChildPath "disk-speed-test.dat") #| Tee-Object -Variable AppOutput
+    $AppOutput = & $AppFullPath -d60 -t2 -c128M -L -r -w50 (Join-Path -Path $TempFolder -ChildPath "disk-speed-test.dat")
 
     #Convert the output to an array.  (Using regex kept losing formatting)
     #Much of what follows is to preserve formatting and make the output a PowerShell custom object
