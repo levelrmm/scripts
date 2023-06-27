@@ -30,11 +30,11 @@
 # - software_name
 # - expected_version (optional)
 
-# Name of the software to check
-$software_name = "Your Software Name"
+# Name of the software to check. Partial names will be matched
+$software_name = "Chrome"
 
 # Expected version of the software (optional)
-$expected_version = "X.X.X"
+$expected_version = "114.0.5735.134"
 
 # -----------------------------------------------------------------------------
 
@@ -45,20 +45,21 @@ function Check-Software {
         [string]$ExpectedVersion
     )
 
-    $installed_version = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -eq $SoftwareName } | Select-Object -ExpandProperty Version
+    $installed_app = get-package | Where-Object -Property Name -Like "*$SoftwareName*" | Select -ExpandProperty Name
+    $installed_version = get-package | Where-Object -Property Name -Like "*$SoftwareName*" | Select -ExpandProperty Version
 
     if ($installed_version -eq $null) {
-        Write-Host "ALERT: $SoftwareName is not installed"
+        Write-Host "ALERT: $SoftwareName is not found in any installed applications"
         exit 1
     }
     elseif ($ExpectedVersion -and $installed_version -ne $ExpectedVersion) {
-        Write-Host "ALERT: $SoftwareName version mismatch"
+        Write-Host "ALERT: $installed_app version mismatch"
         Write-Host "Installed version: $installed_version"
         Write-Host "Expected version: $ExpectedVersion"
         exit 1
     }
     else {
-        Write-Host "SUCCESS: $SoftwareName is installed"
+        Write-Host "SUCCESS: $installed_app is installed"
     }
 }
 
