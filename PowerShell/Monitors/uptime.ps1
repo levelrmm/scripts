@@ -17,18 +17,10 @@
 # Monitor Configuration
 # -----------------------------------------------------------------------------
 # Script: Windows Monitor - System Uptime
-# Script output: Contains
-# Output value: ALERT
+# Script output: Greater than
+# Output value: 30 (days)
 # Run frequency: Hours
 # Duration: 12
-# -----------------------------------------------------------------------------
-
-# -----------------------------------------------------------------------------
-# CONFIGURE
-# - uptime_policy
-
-# Number of days before an alert
-$uptime_policy = 45
 # -----------------------------------------------------------------------------
 
 # Get uptime of device
@@ -37,11 +29,5 @@ $uptime = (Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime | 
 # Round it to a whole number
 $uptime = [math]::Round($uptime)
 
-if ($uptime -gt $uptime_policy) {
-    # If threshold breached, generate an alert
-    Write-Host "ALERT"
-}
-else {
-    # Uptime within acceptable range, output success message
-    Write-Host "SUCCESS"
-}
+# Return uptime
+Write-Host $uptime

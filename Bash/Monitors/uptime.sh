@@ -19,18 +19,10 @@
 # Monitor Configuration
 # -----------------------------------------------------------------------------
 # Script: Linux Monitor - System Uptime
-# Script output: Contains
-# Output value: ALERT
+# Script output: Greater than
+# Output value: 30 (days)
 # Run frequency: Hours
 # Duration: 12
-# -----------------------------------------------------------------------------
-
-# -----------------------------------------------------------------------------
-# CONFIGURE
-# - uptime_policy
-
-# Number of days before an alert
-uptime_policy=45
 # -----------------------------------------------------------------------------
 
 # Get uptime of the system in seconds
@@ -42,9 +34,5 @@ uptime_days=$(bc <<< "scale=2; $uptime_seconds / (60 * 60 * 24)")
 # Round uptime to a whole number
 uptime=$(printf "%.0f" "$uptime_days")
 
-# If threshold breached, generate an alert
-if (( uptime > uptime_policy )); then
-  echo -e "ALERT: device uptime expected to be less than $uptime_policy. Uptime was $uptime days.\n"
-else
-  echo "SUCCESS"
-fi
+# Return uptime
+echo $uptime
