@@ -14,8 +14,8 @@ our community repo!
 #>
 
 #Add the username and password here
-$UserName = "adns"
-$Password = "JustATest123!!!"
+$UserName = "USERNAME_GOES_HERE"
+$Password = "PASSWORD_GOES_HERE"
 
 #Check if the account is present and if so, set the password.
 $checkUser = Get-LocalUser -Name $UserName
