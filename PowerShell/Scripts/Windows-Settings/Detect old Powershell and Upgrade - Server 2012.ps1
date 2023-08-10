@@ -70,6 +70,6 @@ foreach ($File in $ListOfFiles) {
     "Downloaded $File - $FileSize MB"
 }
 
-& wusa.exe "$InstallerFolder\$File" /quiet /norestart
+& wusa.exe "$TempFolder$File" /quiet /norestart
 start-sleep 10
 Write-Host "The computer must be rebooted in order for the new version of PowerShell to be installed."
