@@ -38,12 +38,6 @@ $latestShadowCopies = @()
 $currentDriveLetter = $null
 $currentCreationTime = $null
 
-# Check for PowerShell v5+
-if ($PSVersionTable.PSVersion.Major -lt 5) {
-    Write-Host "This script requires PowerShell version 5 or higher"
-    exit 1
-}
-
 # Run vssadmin to list all the shadow copies present
 $vssShadows = vssadmin list shadows
 # Create a custom object list to store the latest shadow copy creation time for each drive
