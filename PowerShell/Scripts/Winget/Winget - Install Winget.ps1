@@ -64,28 +64,31 @@ if (Test-Path "$InstallerFolder\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msix
     Remove-Item -Path "$InstallerFolder\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle" -Force -ErrorAction Continue
 }
 
-
 Start-Sleep -seconds 5
+#Find the Winget path, and peel off winget.exe
+$ResolveWingetPath = Resolve-Path "C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe\winget.exe"
+if ($null -eq $ResolveWingetPath) {
+    write-host "ERROR: Winget path was not found."
+    exit 1
+}
+$WingetPath = $ResolveWingetPath[-1].Path
+$WingetPath = Split-Path -Path $WingetPath -Parent
+
 #Add Winget to the System path environment variable if it doesn't exist
-if ([Environment]::GetEnvironmentVariable("PATH", "Machine") -notlike "*C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe*") {
-
-    $ResolveWingetPath = Resolve-Path "C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe\winget.exe"
-    if ($ResolveWingetPath) {
-        $WingetPath = $ResolveWingetPath[-1].Path
-    }
-    $WingetPath = Split-Path -Path $WingetPath -Parent
-
+if ([Environment]::GetEnvironmentVariable("PATH", "Machine") -notlike "*$WingetPath*") {
+  
     #Set system path environment variable
     $SystemPath = [Environment]::GetEnvironmentVariable("PATH", "Machine") + [IO.Path]::PathSeparator + $WingetPath
     [Environment]::SetEnvironmentVariable( "Path", $SystemPath, "Machine" )
+ 
     #Check if path successfully added
-    if ([Environment]::GetEnvironmentVariable("PATH", "Machine") -like "*C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*_x64__8wekyb3d8bbwe*") {
+    if ([Environment]::GetEnvironmentVariable("PATH", "Machine") -like "*$WingetPath*") {
         Write-Host "Successfully added winget to the Environment Variables for System Path.  Computer must be rebooted before this takes effect."
         exit
     }
     else {
         Write-Host "Failed to add winget to the Environment Variables for System Path"
-        exit
+        exit 1
     }    
 }
 Write-Host "Environment Variable for system path already exists for winget."
