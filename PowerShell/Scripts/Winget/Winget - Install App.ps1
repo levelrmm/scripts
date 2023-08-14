@@ -16,7 +16,7 @@ our community repo!
 #Add your app(s) here. For a single app just "App1"
 #For multiple apps use "App1", "App2", "App3"
 #To easily find app names check https://winstall.app/ or https://winget.run/
-$App = "Notepad++.Notepad++"
+$App = "Notepad++.Notepad++", "Google.Chrome"
 
 #Setup temp folder
 $InstallerFolder = "c:\temp"
