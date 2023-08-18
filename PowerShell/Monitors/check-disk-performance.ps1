@@ -31,14 +31,14 @@ $AppFullPath = Join-Path -Path (Join-Path -Path $TempFolder -ChildPath $AppName)
 
 #Need at least PowerShell version 5 for Expand-Archive
 if ($PSVersionTable.PSVersion.Major -lt 5) {
-    #Write-Output "This script requires PowerShell version 5 or above."
+    Write-Output "This script requires PowerShell version 5 or above."
     exit 1
 }
 
 #Check for free disk space to download the app and to run the test. (A 128MB file is created for the test)
 $FreeSpace = (Get-Volume -DriveLetter (Get-Location).Drive.Name).SizeRemaining
 if ($FreeSpace -le 250000000) {
-    #Write-Host "Not enough space on the disk to run the disk performance test"
+    Write-Host "Not enough space on the disk to run the disk performance test"
     exit 1
 }
 
