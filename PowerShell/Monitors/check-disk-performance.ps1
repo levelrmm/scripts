@@ -85,11 +85,11 @@ function RunApp {
     $BadPerformance = $false
     foreach ($Result in $IOResults) {
         if ($Result.Latency -ge 20) {
-            #Write-host -ForegroundColor Red "The latency of $($Result.Latency) ms is high. Disk performance should be investigated."
+            Write-host -ForegroundColor Red "The latency of $($Result.Latency) ms is high. Disk performance should be investigated."
             $BadPerformance = $true
         }
         if ($Result.MBsec -le 1000) {
-            #Write-host -ForegroundColor Red "The throughput of $($Result.MBsec) MB/s is low. Disk performance should be investigated."
+            Write-host -ForegroundColor Red "The throughput of $($Result.MBsec) MB/s is low. Disk performance should be investigated."
             $BadPerformance = $true
         }
     }
