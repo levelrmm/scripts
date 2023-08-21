@@ -35,14 +35,6 @@ if ($PSVersionTable.PSVersion.Major -lt 5) {
 $vssShadows = vssadmin list shadows
 # Create an array to store the latest shadow copies
 $latestShadowCopies = @()
-$currentDriveLetter = $null
-$currentCreationTime = $null
-
-# Run vssadmin to list all the shadow copies present
-$vssShadows = vssadmin list shadows
-# Create a custom object list to store the latest shadow copy creation time for each drive
-$latestShadowCopies = @()
-
 $currentTime = $null
 $currentDriveLetters = @()
 
