@@ -38,6 +38,7 @@ if (-not $domainController) {
     exit 1
 }
 
+
 # This function tests the name against DNS.
 Function Get-DomainControllerNSLookup($DomainNameInput) {
     Write-Verbose "..running function Get-DomainControllerNSLookup" 
@@ -171,6 +172,9 @@ Function Get-DomainControllerDCDiagTestResults($DomainNameInput) {
                     Else {
                         $TestStatus = "Failed"
                     }
+                    Else {
+                        $TestStatus = "Failed"
+                    }
                 }
             } 
             If ($TestName -ne $Null -And $TestStatus -ne $Null) {
@@ -259,7 +263,6 @@ function Get-LastReplication {
 }
 
 
-
 # Prepare for the DC tests
 $allTestedDomainControllers = @()
 $GetHostname = [System.Net.Dns]::GetHostByName($env:computerName) | Select-Object -ExpandProperty Hostname
@@ -317,6 +320,7 @@ $thisDomainController."Processing Time" = $stopWatch.Elapsed.Seconds
 # Function to format failures with an ALERT message
 function Format-Failure($status) {
     if ($status -like '*Fail*') {
+
         return "Failed <-------------------- ALERT"
     }
     else {
