@@ -31,6 +31,13 @@
 # Duration: 180
 # -----------------------------------------------------------------------------
 
+# Check if the device is a domain controller
+$domainController = (Get-WmiObject -Query "SELECT * FROM Win32_ComputerSystem").DomainRole -in 4, 5
+if (-not $domainController) {
+    write-host "This device is not a domain controller, exiting."
+    exit 1
+}
+
 
 # This function tests the name against DNS.
 Function Get-DomainControllerNSLookup($DomainNameInput) {
@@ -161,13 +168,12 @@ Function Get-DomainControllerDCDiagTestResults($DomainNameInput) {
                 "passed test|failed test" {
                     If ($_ -Match "passed test") {
                         $TestStatus = "Passed"
-                        # $TestName
-                        # $_
                     }
                     Else {
                         $TestStatus = "Failed"
-                        # $TestName
-                        # $_
+                    }
+                    Else {
+                        $TestStatus = "Failed"
                     }
                 }
             } 
@@ -216,6 +222,46 @@ Function Get-DomainControllerOSDriveFreeSpace ($DomainNameInput) {
     return $thisOSPercentFree
 }
 
+# This function checks for the DC replication error count 
+function Get-ReplicationErrorCount {
+    $ADReplicationFailure = Get-ADreplicationFailure -target localhost
+    if ($ADReplicationFailure.FailureCount -gt 0) {
+        $ADReplicationFailureCount = $ADReplicationFailure.FailureCount
+    }
+    else {
+        $ADReplicationFailureCount = 0
+    }
+
+    if ($ADReplicationFailureCount -gt 0) {
+        return "$ADReplicationFailureCount - Failure"
+    }
+    return "$ADReplicationFailureCount - Passed"
+}
+
+# This function checks for the last successful replication time
+function Get-LastReplication {
+    $LastReplication = Get-ADReplicationPartnerMetadata -target localhost
+
+    # Initialize with a far future date
+    $oldestSuccessTime = [DateTime]::MaxValue
+
+    # If there are multiple connectors to more than one domain controller, then only evaluate the oldest value
+    foreach ($partner in $LastReplication) {
+        if ($partner.LastReplicationSuccess -lt $oldestSuccessTime) {
+            $oldestSuccessTime = $partner.LastReplicationSuccess
+        }
+    }
+
+    $timeDifference = (Get-Date).AddHours(-24)
+    
+    if ($oldestSuccessTime -lt $timeDifference) {    
+        return "$oldestSuccessTime - Failure"
+    }
+    else {
+        return "$oldestSuccessTime - Passed"
+    }
+}
+
 
 # Prepare for the DC tests
 $allTestedDomainControllers = @()
@@ -245,6 +291,8 @@ $thisDomainController | Add-Member NoteProperty -name "DCDIAG: Replications" -Va
 $thisDomainController | Add-Member NoteProperty -name "DCDIAG: FSMO KnowsOfRoleHolders" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "DCDIAG: FSMO Check" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "DCDIAG: Services" -Value $null
+$thisDomainController | Add-Member NoteProperty -name "Replication Errors" -Value $null
+$thisDomainController | Add-Member NoteProperty -name "Last Replication" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "Processing Time" -Value $null
 
 # Populate the properties with the test results
@@ -265,13 +313,17 @@ $thisDomainController."DCDIAG: Advertising" = $DCDiagTestResults.Advertising
 $thisDomainController."DCDIAG: FSMO KnowsOfRoleHolders" = $DCDiagTestResults.KnowsOfRoleHolders
 $thisDomainController."DCDIAG: FSMO Check" = $DCDiagTestResults.FSMOCheck
 $thisDomainController."DCDIAG: Services" = $DCDiagTestResults.Services
+$thisDomainController."Replication Errors" = Get-ReplicationErrorCount
+$thisDomainController."Last Replication" = Get-LastReplication
 $thisDomainController."Processing Time" = $stopWatch.Elapsed.Seconds
 
 # Function to format failures with an ALERT message
 function Format-Failure($status) {
     if ($status -like '*Fail*') {
-        return "Failed <---------- ALERT"
-    } else {
+
+        return "Failed <-------------------- ALERT"
+    }
+    else {
         return $status
     }
 }
@@ -279,8 +331,9 @@ function Format-Failure($status) {
 # Function to format space alerts
 function Format-SpaceAlert($space) {
     if ($space -lt 5) {
-        return "$space% <---------- ALERT"
-    } else {
+        return "$space% <-------------------- ALERT"
+    }
+    else {
         return "$space%"
     }
 }
@@ -304,6 +357,8 @@ DCDIAG: Replications:            $(Format-Failure $thisDomainController.'DCDIAG:
 DCDIAG: FSMO KnowsOfRoleHolders: $(Format-Failure $thisDomainController.'DCDIAG: FSMO KnowsOfRoleHolders')
 DCDIAG: FSMO Check:              $(Format-Failure $thisDomainController.'DCDIAG: FSMO Check')
 DCDIAG: Services:                $(Format-Failure $thisDomainController.'DCDIAG: Services')
+Replication Errors:              $(Format-Failure $thisDomainController.'Replication Errors')
+Last Replication:                $(Format-Failure $thisDomainController.'Last Replication')
 Processing Time:                 $($thisDomainController.'Processing Time')
 
 "@
@@ -318,6 +373,7 @@ $errorCount = ($output -split "`n" | Where-Object { $_ -like "*ALERT*" }).Count
 if ($errorCount -gt 0) {
     Write-Host "Summary: $errorCount Error(s) Detected"
     exit 1
-} else {
+}
+else {
     Write-Host "Summary: No Errors Detected"
 }
