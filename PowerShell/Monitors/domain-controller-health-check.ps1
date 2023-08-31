@@ -172,9 +172,6 @@ Function Get-DomainControllerDCDiagTestResults($DomainNameInput) {
                     Else {
                         $TestStatus = "Failed"
                     }
-                    Else {
-                        $TestStatus = "Failed"
-                    }
                 }
             } 
             If ($TestName -ne $Null -And $TestStatus -ne $Null) {
