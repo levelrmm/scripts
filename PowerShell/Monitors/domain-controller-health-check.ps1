@@ -45,25 +45,12 @@ Function Get-DomainControllerNSLookup($DomainNameInput) {
     try {
         $domainControllerNSLookupResult = Resolve-DnsName $DomainNameInput -Type A | select -ExpandProperty IPAddress
 
-        $domainControllerNSLookupResult = 'Success'
+        $domainControllerNSLookupResult = 'Passed'
     }
     catch {
         $domainControllerNSLookupResult = 'Fail'
     }
     return $domainControllerNSLookupResult
-}
-
-# This function tests the connectivity to the domain controller.
-Function Get-DomainControllerPingStatus($DomainNameInput) {
-    Write-Verbose "..running function Get-DomainControllerPingStatus" 
-    If ((Test-Connection $DomainNameInput -Count 1 -quiet) -eq $True) {
-        $domainControllerPingStatus = "Success"
-    }
-
-    Else {
-        $domainControllerPingStatus = 'Fail'
-    }
-    return $domainControllerPingStatus
 }
 
 # This function tests the domain controller uptime.
@@ -79,7 +66,6 @@ Function Get-DomainControllerUpTime($DomainNameInput) {
         catch [exception] {
             $uptime = 'WMI Failure'
         }
-
     }
 
     Else {
@@ -125,19 +111,19 @@ Function Get-DomainControllerServices($DomainNameInput) {
 
     If ((Test-Connection $DomainNameInput -Count 1 -quiet) -eq $True) {
         If ((Get-Service -ComputerName $DomainNameInput -Name DNS -ErrorAction SilentlyContinue).Status -eq 'Running') {
-            $thisDomainControllerServicesTestResult.DNSService = 'Success'
+            $thisDomainControllerServicesTestResult.DNSService = 'Passed'
         }
         Else {
             $thisDomainControllerServicesTestResult.DNSService = 'Fail'
         }
         If ((Get-Service -ComputerName $DomainNameInput -Name NTDS -ErrorAction SilentlyContinue).Status -eq 'Running') {
-            $thisDomainControllerServicesTestResult.NTDSService = 'Success'
+            $thisDomainControllerServicesTestResult.NTDSService = 'Passed'
         }
         Else {
             $thisDomainControllerServicesTestResult.NTDSService = 'Fail'
         }
         If ((Get-Service -ComputerName $DomainNameInput -Name netlogon -ErrorAction SilentlyContinue).Status -eq 'Running') {
-            $thisDomainControllerServicesTestResult.NETLOGONService = 'Success'
+            $thisDomainControllerServicesTestResult.NETLOGONService = 'Passed'
         }
         Else {
             $thisDomainControllerServicesTestResult.NETLOGONService = 'Fail'
@@ -152,7 +138,7 @@ Function Get-DomainControllerServices($DomainNameInput) {
     return $thisDomainControllerServicesTestResult
 } 
 
-# This function runs the five DCDiag tests and saves them in a variable for later processing.
+# This function runs five DCDiag tests and saves them in a variable for later processing.
 Function Get-DomainControllerDCDiagTestResults($DomainNameInput) {
     Write-Verbose "..running function Get-DomainControllerDCDiagTestResults"
 
@@ -196,7 +182,7 @@ Function Get-DomainControllerDCDiagTestResults($DomainNameInput) {
 # This function checks the server OS version.
 Function Get-DomainControllerOSVersion ($DomainNameInput) {
     Write-Verbose "..running function Get-DomainControllerOSVersion"
-    $W32OSVersion = (Get-WmiObject -Class Win32_OperatingSystem -ComputerName $DomainNameInput -ErrorAction SilentlyContinue).Caption
+    $W32OSVersion = (Get-WmiObject -Class Win32_OperatingSystem -ErrorAction SilentlyContinue).Caption
     return $W32OSVersion
 }
 
@@ -259,6 +245,55 @@ function Get-LastReplication {
     }
 }
 
+#This function checks that there is more than one domain controller
+function Get-DomainControllerCount {
+    $DCList = dsquery server -forest
+    $DCCount = $DCList.count
+    if ($DCCount -gt 1) {
+        return "$DCCount - Passed"
+    }
+    else {
+        return "$DCCount - Failure"
+    }
+}
+
+#This function checks that the forest and domain functional levels are below the server version
+function Get-DomainFunctionalLevel {
+    # Get the server version
+    $serverVersion = (Get-WmiObject -Class Win32_OperatingSystem -ErrorAction SilentlyContinue).Caption
+    $serverVersionNumber = $serverVersion -replace '\D+(\d+).+', '$1'
+
+    # Get the domain version
+    $domainVersion = (Get-ADDomain | Select -ExpandProperty DomainMode)
+    $domainVersionNumber = $domainVersion -replace '\D+(\d+).+', '$1'
+
+    # Check if the server version is higher than the domain version (except when the domain version is 2016)
+    if ($domainVersion -ne "Windows2016Domain" -and [int]$serverVersionNumber -gt [int]$domainVersionNumber) {
+        return "OS $serverVersionNumber > Domain $domainVersionNumber - Failure"
+    }
+    else {
+        return "OS $serverVersionNumber & Domain $domainVersionNumber - Passed"
+    } 
+}
+
+function Get-ForestFunctionalLevel {
+    # Get the server version
+    $serverVersion = (Get-WmiObject -Class Win32_OperatingSystem -ErrorAction SilentlyContinue).Caption
+    $serverVersionNumber = $serverVersion -replace '\D+(\d+).+', '$1'
+
+    # Get the forest version
+    $forestVersion = (Get-ADForest | Select -ExpandProperty ForestMode)
+    $forestVersionNumber = $forestVersion -replace '\D+(\d+).+', '$1'
+
+    # Check if the server version is higher than the forest version (except when the forest version is 2016)
+    if ($forestVersion -ne "Windows2016Forest" -and [int]$serverVersionNumber -gt [int]$forestVersionNumber) {
+        return "OS $serverVersionNumber > Forest $forestVersionNumber - Failure"
+    }
+    else {
+        return "OS $serverVersionNumber & Forest $forestVersionNumber - Passed"
+    }
+}
+
 
 # Prepare for the DC tests
 $allTestedDomainControllers = @()
@@ -276,7 +311,6 @@ $thisDomainController | Add-Member NoteProperty -name Site -Value $null
 $thisDomainController | Add-Member NoteProperty -name "OS Version" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "Operation Master Roles" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "DNS" -Value $null
-$thisDomainController | Add-Member NoteProperty -name "Ping" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "Uptime (hrs)" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "DIT Free Space (%)" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "OS Free Space (%)" -Value $null
@@ -290,6 +324,9 @@ $thisDomainController | Add-Member NoteProperty -name "DCDIAG: FSMO Check" -Valu
 $thisDomainController | Add-Member NoteProperty -name "DCDIAG: Services" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "Replication Errors" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "Last Replication" -Value $null
+$thisDomainController | Add-Member NoteProperty -name "DC Quantity" -Value $null
+$thisDomainController | Add-Member NoteProperty -name "Domain Level" -Value $null
+$thisDomainController | Add-Member NoteProperty -name "Forest Level" -Value $null
 $thisDomainController | Add-Member NoteProperty -name "Processing Time" -Value $null
 
 # Populate the properties with the test results
@@ -298,7 +335,6 @@ $thisDomainController.Site = $domainController.Site
 $thisDomainController."OS Version" = (Get-DomainControllerOSVersion $domainController.hostname)
 $thisDomainController."Operation Master Roles" = if ($domainController.OperationMasterRoles) { $domainController.OperationMasterRoles -join ', ' } else { 'none' }
 $thisDomainController.DNS = Get-DomainControllerNSLookup $domainController.HostName
-$thisDomainController.Ping = Get-DomainControllerPingStatus $domainController.HostName
 $thisDomainController."Uptime (hrs)" = Get-DomainControllerUpTime $domainController.HostName
 $thisDomainController."DIT Free Space (%)" = Get-DITFileDriveSpace $domainController.HostName
 $thisDomainController."OS Free Space (%)" = Get-DomainControllerOSDriveFreeSpace $domainController.HostName
@@ -312,6 +348,9 @@ $thisDomainController."DCDIAG: FSMO Check" = $DCDiagTestResults.FSMOCheck
 $thisDomainController."DCDIAG: Services" = $DCDiagTestResults.Services
 $thisDomainController."Replication Errors" = Get-ReplicationErrorCount
 $thisDomainController."Last Replication" = Get-LastReplication
+$thisDomainController."DC Quantity" = Get-DomainControllerCount
+$thisDomainController."Domain Level" = Get-DomainFunctionalLevel
+$thisDomainController."Forest Level" = Get-ForestFunctionalLevel
 $thisDomainController."Processing Time" = $stopWatch.Elapsed.Seconds
 
 # Function to format failures with an ALERT message
@@ -342,7 +381,6 @@ Site:                            $($thisDomainController.Site)
 OS Version:                      $($thisDomainController.'OS Version')
 Operation Master Roles:          $($thisDomainController.'Operation Master Roles')
 DNS:                             $(Format-Failure $thisDomainController.DNS)
-Ping:                            $(Format-Failure $thisDomainController.Ping)
 Uptime (hrs):                    $($thisDomainController.'Uptime (hrs)')
 DIT Free Space (%):              $(Format-SpaceAlert $thisDomainController.'DIT Free Space (%)')
 OS Free Space (%):               $(Format-SpaceAlert $thisDomainController.'OS Free Space (%)')
@@ -356,6 +394,9 @@ DCDIAG: FSMO Check:              $(Format-Failure $thisDomainController.'DCDIAG:
 DCDIAG: Services:                $(Format-Failure $thisDomainController.'DCDIAG: Services')
 Replication Errors:              $(Format-Failure $thisDomainController.'Replication Errors')
 Last Replication:                $(Format-Failure $thisDomainController.'Last Replication')
+DC Quantity:                     $(Format-Failure $thisDomainController.'DC Quantity')
+Domain Level:                    $(Format-Failure $thisDomainController.'Domain Level')
+Forest Level:                    $(Format-Failure $thisDomainController.'Forest Level')
 Processing Time:                 $($thisDomainController.'Processing Time')
 
 "@
