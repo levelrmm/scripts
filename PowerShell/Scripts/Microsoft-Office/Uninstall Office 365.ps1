@@ -27,7 +27,7 @@ else {
 
 #Download installers to temp folder
 Write-Host "Downloading required files"
-$BaseURL = "https://github.com/levelsoftware/scripts/raw/main/PowerShell/Microsoft-Office/Uninstall Office 365/"
+$BaseURL = "https://github.com/levelsoftware/scripts/raw/a92fc25f298b6310286657cc8d4885174c21fbd9/PowerShell/Scripts/Microsoft-Office/Uninstall%20Office%20365/"
 $O365Setup = "OfficeSetup.exe"
 $ConfigFile = "UninstallOffice.xml"
 $ListOfFiles = $O365Setup, $ConfigFile

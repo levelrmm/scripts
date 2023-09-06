@@ -34,7 +34,7 @@ else {
 }
 
 Write-Host "Downloading all required files"
-$BaseURL = "https://github.com/levelsoftware/scripts/raw/main/PowerShell/Microsoft-Office/Uninstall All Versions of Office/"
+$BaseURL = "https://github.com/levelsoftware/scripts/raw/a92fc25f298b6310286657cc8d4885174c21fbd9/PowerShell/Scripts/Microsoft-Office/Uninstall%20All%20Versions%20of%20Office/"
 $O365Setup = "OfficeSetup.exe"
 $ConfigFile = "UninstallOffice.xml"
 $ListOfFiles = $O365Setup, $ConfigFile, "OffScrub03.vbs", "OffScrub07.vbs", "OffScrub10.vbs", "OffScrub_O15msi.vbs", "OffScrub_O16msi.vbs", "OffScrubc2r.vbs", "Office2013Setup.exe", "Office2016Setup.exe", "Remove-PreviousOfficeInstalls.ps1"

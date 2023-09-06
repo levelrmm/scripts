@@ -28,7 +28,7 @@ if (Test-Path -Path $TempFolder) {
 #Download the required files
 "Downloading all required files"
 $ProgressPreference = 'SilentlyContinue'
-$BaseURL = "https://github.com/levelsoftware/scripts/raw/main/PowerShell/Microsoft-Office/Install Visio Pro 2021 Retail (365) (64-bit)/"
+$BaseURL = "https://github.com/levelsoftware/scripts/raw/a92fc25f298b6310286657cc8d4885174c21fbd9/PowerShell/Scripts/Microsoft-Office/Install%20Visio%20Pro%202021%20Retail%20(365)%20(64-bit)/"
 $O365Setup = "VisioSetup.exe"
 $ConfigFile = "VisioPro2021Retail-x64.xml"
 $ListOfFiles = $O365Setup,$ConfigFile
