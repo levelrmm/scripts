@@ -41,4 +41,4 @@ foreach ($File in $ListOfFiles) {
 }
 
 #Install Office
-& $TempFolder$O365Setup /configure $ConfigFile
+& $TempFolder$O365Setup /configure $TempFolder$ConfigFile
