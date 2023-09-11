@@ -31,41 +31,36 @@
 # - expected_dns_servers
 
 # Array of expected DNS servers
-$expectedDnsServers = @("1.1.1.1", "1.0.0.1")
+$allowedDnsServers = @("1.1.1.1", "1.0.0.1")
 
 # -----------------------------------------------------------------------------
 
-# Function to check if the DNS servers match the expected configuration
+# Function to check if the DNS servers match the allowed list
 function Check-DnsServers {
-    param (
-        [string[]]$ExpectedDnsServers
-    )
-
     $networkInterfaces = Get-WmiObject -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IPEnabled }
 
     foreach ($interface in $networkInterfaces) {
         $dnsServers = $interface.DNSServerSearchOrder
 
         Write-Host "Interface: $($interface.Description)"
-        Write-Host "Expected DNS servers: $($ExpectedDnsServers -join ', ')"
+        Write-Host "Allowed DNS servers: $($allowedDnsServers -join ', ')"
         Write-Host "Current DNS servers: $($dnsServers -join ', ')"
 
-        if ($dnsServers -ne $null -and $dnsServers.Length -gt 0) {
-            $matchingServers = Compare-Object $dnsServers $ExpectedDnsServers -IncludeEqual
+        if ($dnsServers -ne $null -and $dnsServers.Count -gt 0) {
+            $matchingServers = @($dnsServers | Where-Object { $allowedDnsServers -contains $_ })
 
-            if ($matchingServers.SideIndicator -contains '<=' -or $matchingServers.SideIndicator -contains '=>') {
-                Write-Host "ALERT: DNS servers do not match the expected configuration"
-                Write-Host "Actual DNS servers: $($dnsServers -join ', ')"
-                Write-Host "Expected DNS servers: $($ExpectedDnsServers -join ', ')"
+            if ($matchingServers.Count -eq $dnsServers.Count) {
+                Write-Host "SUCCESS: DNS servers match the allowed list."
+            } else {
+                Write-Host "ALERT: Not all DNS servers are in the allowed list."
                 exit 1
             }
-        }
-        else {
+        } else {
             Write-Host "ALERT: No DNS servers configured"
             exit 1
         }
     }
 }
 
-# Check if the DNS servers match the expected configuration
-Check-DnsServers -ExpectedDnsServers $expectedDnsServers
+# Check if the DNS servers match the allowed list
+Check-DnsServers
