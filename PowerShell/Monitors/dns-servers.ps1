@@ -52,7 +52,7 @@ function Check-DnsServers {
             if ($matchingServers.Count -eq $dnsServers.Count) {
                 Write-Host "SUCCESS: DNS servers match the allowed list."
             } else {
-                Write-Host "FAIL: Not all DNS servers are in the allowed list."
+                Write-Host "ALERT: Not all DNS servers are in the allowed list."
                 exit 1
             }
         } else {
