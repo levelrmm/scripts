@@ -14,7 +14,7 @@
 #
 # Language: PowerShell
 # Timeout: 100
-# Version: 1.0
+# Version: 1.1
 #
 # -----------------------------------------------------------------------------
 # Monitor Configuration
@@ -51,18 +51,10 @@ function Check-DnsServers {
         Write-Host "Current DNS servers: $($dnsServers -join ', ')"
 
         if ($dnsServers -ne $null -and $dnsServers.Length -gt 0) {
-            $matchingServers = Compare-Object $dnsServers $ExpectedDnsServers
+            $matchingServers = Compare-Object $dnsServers $ExpectedDnsServers -IncludeEqual
 
-            Write-Host "Matching DNS servers: $($matchingServers -join ', ')"
-            Write-Host "Comparison Result: $($matchingServers -eq $null)"
-            Write-Host "Comparison Details:"
-            $matchingServers | ForEach-Object {
-                Write-Host "  - $_"
-            }
-
-            if ($matchingServers -eq $null) {
+            if ($matchingServers.SideIndicator -contains '<=' -or $matchingServers.SideIndicator -contains '=>') {
                 Write-Host "ALERT: DNS servers do not match the expected configuration"
-                Write-Host "Comparison Result: $($matchingServers -eq $null)"
                 Write-Host "Actual DNS servers: $($dnsServers -join ', ')"
                 Write-Host "Expected DNS servers: $($ExpectedDnsServers -join ', ')"
                 exit 1
