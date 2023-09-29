@@ -22,7 +22,7 @@ $Message_file = @"
 "@
 
 #Check if a user is logged in.  Can't send a toast to no one!
-$LoggedInUser = Get-Process -IncludeUserName -Name explorer | Select-Object -ExpandProperty UserName -Unique
+$LoggedInUser = Get-Process -IncludeUserName -Name explorer -ErrorAction SilentlyContinue | Select-Object -ExpandProperty UserName -Unique
 if ($LoggedInUser) {
     "$LoggedInUser is logged in.  Sending toast"
 }
@@ -58,7 +58,7 @@ $TempFolder = 'C:\temp'
 if (Test-Path -Path $TempFolder -ErrorAction SilentlyContinue) {
 }
 else {
-    mkdir c:\temp
+    mkdir $TempFolder
 }
 
 #Save the message to a file because can't pass variables to the invoke-ascurrentuser
