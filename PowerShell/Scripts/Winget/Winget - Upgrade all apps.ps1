@@ -14,7 +14,6 @@ our community repo!
 .LINK
 #>
 
-
 $TestWinget = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -eq "Microsoft.DesktopAppInstaller" }
 
 #Check if Winget is installed
@@ -35,12 +34,12 @@ If ([Version]$TestWinGet. Version -gt "2022.506.16.0") {
         Write-Host "WinGet path is correct, updating apps as SYSTEM" -ForegroundColor Green
         #Upgrade all apps as system
         try {
-            & winget.exe upgrade --all --silent --accept-source-agreements
+            & winget.exe upgrade --all --silent --accept-source-agreements --accept-package-agreements
         }
         catch {
             Write-Host $_.Exception.Message -ForegroundColor Red
             Write-Host "Has the computer been rebooted since adding Winget to the System path variable? Attempting to upgrade via the absolute path."
-            & $WingetPath\winget.exe upgrade --all --silent --accept-source-agreements
+            & $WingetPath\winget.exe upgrade --all --silent --accept-source-agreements --accept-package-agreements
         }  
     }
     Else {
@@ -49,7 +48,7 @@ If ([Version]$TestWinGet. Version -gt "2022.506.16.0") {
         [Environment]::SetEnvironmentVariable( "Path", $SystemPath, "Machine" )
         
         #Update all apps by calling winget via the full path
-        & $WingetPath\winget.exe upgrade --all --silent --accept-source-agreements --accept-source-agreements
+        & $WingetPath\winget.exe upgrade --all --silent --accept-source-agreements --accept-package-agreements
     }
 }
 Else {
@@ -94,9 +93,5 @@ foreach ($Module in $ModuleList) {
 
 Write-Host "Running remaining winget updates as $LoggedInUser"
 #write the output to a file so that we can pick it back up as SYSTEM
-$UpdateAllApps = { winget upgrade --all --silent --accept-source-agreements --accept-source-agreements | Out-File "$TempFolder\wingetAsUser.txt" }
-invoke-ascurrentuser -scriptblock $UpdateAllApps
-#Write the contents of the command output file
-Get-Content "$TempFolder\wingetAsUser.txt"
-#Delete the output file
-remove-item "$TempFolder\wingetAsUser.txt" -Force
+$UpdateAllApps = { winget upgrade --all --silent --accept-source-agreements --accept-package-agreements }
+invoke-ascurrentuser -scriptblock $UpdateAllApps -CaptureOutput
