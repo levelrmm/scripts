@@ -10,7 +10,11 @@
 # -----------------------------------------------------------------------------
 # Name: Windows Monitor - Find inactive AD user accounts
 # Description: Search Active Directory for users that have not logged in for 
-# some time.  The threshold in days is defined with $InactiveDays
+# some time.  The threshold in days is defined with $InactiveDays.   Not 
+# included are user accounts that begin with HealthMailbox, IUSR, IWAM, AAD,
+# MSOL, etc.  Also excluding disabled accounts and any with "Audited" in the
+# description field.
+#
 # Language: PowerShell
 # Timeout: 100
 # Version: 1.0
