@@ -32,6 +32,7 @@ $services = Get-WmiObject -Class win32_service -Filter "StartMode='Auto' AND NOT
 
 # Alert if services are found. 
 if($services -ne $null){
-  Write-Output "ALERT"
+  Write-Output "ALERT: The following services are vulnerable to CVE-2023-32658."
+  $services | format-table Name,StartMode,State
   Exit 1
 }
