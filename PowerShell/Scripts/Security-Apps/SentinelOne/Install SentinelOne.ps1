@@ -17,7 +17,7 @@ our community repo!
 $SiteToken = "INSERT_S1_TOKEN_HERE"
 
 #The Windows 64-Bit installer
-$S1_File = "SentinelInstaller_windows_64bit_v22_3_4_612.msi"
+$S1_File = "SentinelInstaller_windows_64bit_v23_3_2_235.msi"
 
 #Setup
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force
