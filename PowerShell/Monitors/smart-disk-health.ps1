@@ -27,6 +27,7 @@
 # Checks local disks for health status
 $DiskState = Get-PhysicalDisk | Where-Object {$_.HealthStatus  -ne 'Healthy'}
 if ($DiskState){
-    Write-Host "ALERT"
-    Exit
+    $DiskState | out-host
+    write-host "ALERT: Disk failure predicted!"
+	exit 1
 }
