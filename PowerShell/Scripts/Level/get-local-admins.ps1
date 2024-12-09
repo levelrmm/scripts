@@ -16,11 +16,6 @@
 # Version: 1.0
 #
 # -----------------------------------------------------------------------------
-# Monitor Configuration
-# -----------------------------------------------------------------------------
-# Script: Windows - Get Local Admins
-# Script output: $detectedAdmins
-# -----------------------------------------------------------------------------
 
 # Get all local admins that are enabled
 $admins = Get-LocalGroupMember -Group "Administrators" | 
